@@ -1,0 +1,1960 @@
+items:
+  doudizhu:classic_back:
+    material: paper
+    data:
+      item_name: <!i><white>经典牌背
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_back_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_back
+  doudizhu:classic_spade_3:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃3
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_3
+  doudizhu:classic_spade_4:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃4
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_4_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_4
+  doudizhu:classic_spade_5:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃5
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_5_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_5
+  doudizhu:classic_spade_6:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃6
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_6_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_6
+  doudizhu:classic_spade_7:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃7
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_7_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_7
+  doudizhu:classic_spade_8:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃8
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_8_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_8
+  doudizhu:classic_spade_9:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃9
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_9_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_9
+  doudizhu:classic_spade_10:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃10
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_10_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_10
+  doudizhu:classic_spade_j:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃J
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_j_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_j
+  doudizhu:classic_spade_q:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃Q
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_q_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_q
+  doudizhu:classic_spade_k:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃K
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_k_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_k
+  doudizhu:classic_spade_a:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃A
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_a_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_a
+  doudizhu:classic_spade_2:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃2
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_spade_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_spade_2
+  doudizhu:classic_heart_3:
+    material: paper
+    data:
+      item_name: <!i><white>红桃3
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_3
+  doudizhu:classic_heart_4:
+    material: paper
+    data:
+      item_name: <!i><white>红桃4
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_4_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_4
+  doudizhu:classic_heart_5:
+    material: paper
+    data:
+      item_name: <!i><white>红桃5
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_5_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_5
+  doudizhu:classic_heart_6:
+    material: paper
+    data:
+      item_name: <!i><white>红桃6
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_6_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_6
+  doudizhu:classic_heart_7:
+    material: paper
+    data:
+      item_name: <!i><white>红桃7
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_7_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_7
+  doudizhu:classic_heart_8:
+    material: paper
+    data:
+      item_name: <!i><white>红桃8
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_8_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_8
+  doudizhu:classic_heart_9:
+    material: paper
+    data:
+      item_name: <!i><white>红桃9
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_9_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_9
+  doudizhu:classic_heart_10:
+    material: paper
+    data:
+      item_name: <!i><white>红桃10
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_10_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_10
+  doudizhu:classic_heart_j:
+    material: paper
+    data:
+      item_name: <!i><white>红桃J
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_j_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_j
+  doudizhu:classic_heart_q:
+    material: paper
+    data:
+      item_name: <!i><white>红桃Q
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_q_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_q
+  doudizhu:classic_heart_k:
+    material: paper
+    data:
+      item_name: <!i><white>红桃K
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_k_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_k
+  doudizhu:classic_heart_a:
+    material: paper
+    data:
+      item_name: <!i><white>红桃A
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_a_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_a
+  doudizhu:classic_heart_2:
+    material: paper
+    data:
+      item_name: <!i><white>红桃2
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_heart_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_heart_2
+  doudizhu:classic_club_3:
+    material: paper
+    data:
+      item_name: <!i><white>梅花3
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_3
+  doudizhu:classic_club_4:
+    material: paper
+    data:
+      item_name: <!i><white>梅花4
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_4_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_4
+  doudizhu:classic_club_5:
+    material: paper
+    data:
+      item_name: <!i><white>梅花5
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_5_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_5
+  doudizhu:classic_club_6:
+    material: paper
+    data:
+      item_name: <!i><white>梅花6
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_6_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_6
+  doudizhu:classic_club_7:
+    material: paper
+    data:
+      item_name: <!i><white>梅花7
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_7_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_7
+  doudizhu:classic_club_8:
+    material: paper
+    data:
+      item_name: <!i><white>梅花8
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_8_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_8
+  doudizhu:classic_club_9:
+    material: paper
+    data:
+      item_name: <!i><white>梅花9
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_9_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_9
+  doudizhu:classic_club_10:
+    material: paper
+    data:
+      item_name: <!i><white>梅花10
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_10_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_10
+  doudizhu:classic_club_j:
+    material: paper
+    data:
+      item_name: <!i><white>梅花J
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_j_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_j
+  doudizhu:classic_club_q:
+    material: paper
+    data:
+      item_name: <!i><white>梅花Q
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_q_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_q
+  doudizhu:classic_club_k:
+    material: paper
+    data:
+      item_name: <!i><white>梅花K
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_k_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_k
+  doudizhu:classic_club_a:
+    material: paper
+    data:
+      item_name: <!i><white>梅花A
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_a_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_a
+  doudizhu:classic_club_2:
+    material: paper
+    data:
+      item_name: <!i><white>梅花2
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_club_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_club_2
+  doudizhu:classic_diamond_3:
+    material: paper
+    data:
+      item_name: <!i><white>方块3
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_3
+  doudizhu:classic_diamond_4:
+    material: paper
+    data:
+      item_name: <!i><white>方块4
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_4_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_4
+  doudizhu:classic_diamond_5:
+    material: paper
+    data:
+      item_name: <!i><white>方块5
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_5_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_5
+  doudizhu:classic_diamond_6:
+    material: paper
+    data:
+      item_name: <!i><white>方块6
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_6_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_6
+  doudizhu:classic_diamond_7:
+    material: paper
+    data:
+      item_name: <!i><white>方块7
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_7_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_7
+  doudizhu:classic_diamond_8:
+    material: paper
+    data:
+      item_name: <!i><white>方块8
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_8_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_8
+  doudizhu:classic_diamond_9:
+    material: paper
+    data:
+      item_name: <!i><white>方块9
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_9_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_9
+  doudizhu:classic_diamond_10:
+    material: paper
+    data:
+      item_name: <!i><white>方块10
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_10_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_10
+  doudizhu:classic_diamond_j:
+    material: paper
+    data:
+      item_name: <!i><white>方块J
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_j_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_j
+  doudizhu:classic_diamond_q:
+    material: paper
+    data:
+      item_name: <!i><white>方块Q
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_q_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_q
+  doudizhu:classic_diamond_k:
+    material: paper
+    data:
+      item_name: <!i><white>方块K
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_k_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_k
+  doudizhu:classic_diamond_a:
+    material: paper
+    data:
+      item_name: <!i><white>方块A
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_a_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_a
+  doudizhu:classic_diamond_2:
+    material: paper
+    data:
+      item_name: <!i><white>方块2
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_diamond_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_diamond_2
+  doudizhu:classic_joker_small:
+    material: paper
+    data:
+      item_name: <!i><white>小王
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_joker_small_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_joker_small
+  doudizhu:classic_joker_big:
+    material: paper
+    data:
+      item_name: <!i><white>大王
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/classic_joker_big_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/classic_joker_big
+  doudizhu:jade_back:
+    material: paper
+    data:
+      item_name: <!i><white>青玉牌背
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_back_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_back
+  doudizhu:jade_spade_3:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃3
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_3
+  doudizhu:jade_spade_4:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃4
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_4_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_4
+  doudizhu:jade_spade_5:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃5
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_5_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_5
+  doudizhu:jade_spade_6:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃6
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_6_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_6
+  doudizhu:jade_spade_7:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃7
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_7_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_7
+  doudizhu:jade_spade_8:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃8
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_8_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_8
+  doudizhu:jade_spade_9:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃9
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_9_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_9
+  doudizhu:jade_spade_10:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃10
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_10_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_10
+  doudizhu:jade_spade_j:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃J
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_j_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_j
+  doudizhu:jade_spade_q:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃Q
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_q_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_q
+  doudizhu:jade_spade_k:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃K
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_k_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_k
+  doudizhu:jade_spade_a:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃A
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_a_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_a
+  doudizhu:jade_spade_2:
+    material: paper
+    data:
+      item_name: <!i><white>黑桃2
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_spade_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_spade_2
+  doudizhu:jade_heart_3:
+    material: paper
+    data:
+      item_name: <!i><white>红桃3
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_3
+  doudizhu:jade_heart_4:
+    material: paper
+    data:
+      item_name: <!i><white>红桃4
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_4_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_4
+  doudizhu:jade_heart_5:
+    material: paper
+    data:
+      item_name: <!i><white>红桃5
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_5_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_5
+  doudizhu:jade_heart_6:
+    material: paper
+    data:
+      item_name: <!i><white>红桃6
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_6_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_6
+  doudizhu:jade_heart_7:
+    material: paper
+    data:
+      item_name: <!i><white>红桃7
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_7_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_7
+  doudizhu:jade_heart_8:
+    material: paper
+    data:
+      item_name: <!i><white>红桃8
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_8_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_8
+  doudizhu:jade_heart_9:
+    material: paper
+    data:
+      item_name: <!i><white>红桃9
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_9_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_9
+  doudizhu:jade_heart_10:
+    material: paper
+    data:
+      item_name: <!i><white>红桃10
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_10_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_10
+  doudizhu:jade_heart_j:
+    material: paper
+    data:
+      item_name: <!i><white>红桃J
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_j_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_j
+  doudizhu:jade_heart_q:
+    material: paper
+    data:
+      item_name: <!i><white>红桃Q
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_q_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_q
+  doudizhu:jade_heart_k:
+    material: paper
+    data:
+      item_name: <!i><white>红桃K
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_k_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_k
+  doudizhu:jade_heart_a:
+    material: paper
+    data:
+      item_name: <!i><white>红桃A
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_a_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_a
+  doudizhu:jade_heart_2:
+    material: paper
+    data:
+      item_name: <!i><white>红桃2
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_heart_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_heart_2
+  doudizhu:jade_club_3:
+    material: paper
+    data:
+      item_name: <!i><white>梅花3
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_3
+  doudizhu:jade_club_4:
+    material: paper
+    data:
+      item_name: <!i><white>梅花4
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_4_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_4
+  doudizhu:jade_club_5:
+    material: paper
+    data:
+      item_name: <!i><white>梅花5
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_5_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_5
+  doudizhu:jade_club_6:
+    material: paper
+    data:
+      item_name: <!i><white>梅花6
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_6_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_6
+  doudizhu:jade_club_7:
+    material: paper
+    data:
+      item_name: <!i><white>梅花7
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_7_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_7
+  doudizhu:jade_club_8:
+    material: paper
+    data:
+      item_name: <!i><white>梅花8
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_8_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_8
+  doudizhu:jade_club_9:
+    material: paper
+    data:
+      item_name: <!i><white>梅花9
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_9_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_9
+  doudizhu:jade_club_10:
+    material: paper
+    data:
+      item_name: <!i><white>梅花10
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_10_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_10
+  doudizhu:jade_club_j:
+    material: paper
+    data:
+      item_name: <!i><white>梅花J
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_j_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_j
+  doudizhu:jade_club_q:
+    material: paper
+    data:
+      item_name: <!i><white>梅花Q
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_q_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_q
+  doudizhu:jade_club_k:
+    material: paper
+    data:
+      item_name: <!i><white>梅花K
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_k_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_k
+  doudizhu:jade_club_a:
+    material: paper
+    data:
+      item_name: <!i><white>梅花A
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_a_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_a
+  doudizhu:jade_club_2:
+    material: paper
+    data:
+      item_name: <!i><white>梅花2
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_club_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_club_2
+  doudizhu:jade_diamond_3:
+    material: paper
+    data:
+      item_name: <!i><white>方块3
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_3
+  doudizhu:jade_diamond_4:
+    material: paper
+    data:
+      item_name: <!i><white>方块4
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_4_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_4
+  doudizhu:jade_diamond_5:
+    material: paper
+    data:
+      item_name: <!i><white>方块5
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_5_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_5
+  doudizhu:jade_diamond_6:
+    material: paper
+    data:
+      item_name: <!i><white>方块6
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_6_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_6
+  doudizhu:jade_diamond_7:
+    material: paper
+    data:
+      item_name: <!i><white>方块7
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_7_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_7
+  doudizhu:jade_diamond_8:
+    material: paper
+    data:
+      item_name: <!i><white>方块8
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_8_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_8
+  doudizhu:jade_diamond_9:
+    material: paper
+    data:
+      item_name: <!i><white>方块9
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_9_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_9
+  doudizhu:jade_diamond_10:
+    material: paper
+    data:
+      item_name: <!i><white>方块10
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_10_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_10
+  doudizhu:jade_diamond_j:
+    material: paper
+    data:
+      item_name: <!i><white>方块J
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_j_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_j
+  doudizhu:jade_diamond_q:
+    material: paper
+    data:
+      item_name: <!i><white>方块Q
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_q_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_q
+  doudizhu:jade_diamond_k:
+    material: paper
+    data:
+      item_name: <!i><white>方块K
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_k_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_k
+  doudizhu:jade_diamond_a:
+    material: paper
+    data:
+      item_name: <!i><white>方块A
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_a_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_a
+  doudizhu:jade_diamond_2:
+    material: paper
+    data:
+      item_name: <!i><white>方块2
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_diamond_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_diamond_2
+  doudizhu:jade_joker_small:
+    material: paper
+    data:
+      item_name: <!i><white>小王
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_joker_small_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_joker_small
+  doudizhu:jade_joker_big:
+    material: paper
+    data:
+      item_name: <!i><white>大王
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/jade_joker_big_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/jade_joker_big
+  doudizhu:ready:
+    material: paper
+    data:
+      item_name: <!i><white>准备
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/ready_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/ready
+  doudizhu:play:
+    material: paper
+    data:
+      item_name: <!i><white>出牌
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/play_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/play
+  doudizhu:pass:
+    material: paper
+    data:
+      item_name: <!i><white>不出
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/pass_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/pass
+  doudizhu:hint:
+    material: paper
+    data:
+      item_name: <!i><white>提示
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/hint_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/hint
+  doudizhu:leave:
+    material: paper
+    data:
+      item_name: <!i><white>离桌
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/leave_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/leave
+  doudizhu:bid_0:
+    material: paper
+    data:
+      item_name: <!i><white>不叫
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/bid_0_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/bid_0
+  doudizhu:bid_1:
+    material: paper
+    data:
+      item_name: <!i><white>叫一分
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/bid_1_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/bid_1
+  doudizhu:bid_2:
+    material: paper
+    data:
+      item_name: <!i><white>叫两分
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/bid_2_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/bid_2
+  doudizhu:bid_3:
+    material: paper
+    data:
+      item_name: <!i><white>叫三分
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/bid_3_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/bid_3
+  doudizhu:music:
+    material: paper
+    data:
+      item_name: <!i><white>音乐
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/music_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/music
+  doudizhu:skin:
+    material: paper
+    data:
+      item_name: <!i><white>牌面
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/skin_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/skin
+  doudizhu:table:
+    material: paper
+    data:
+      item_name: <!i><white>牌桌
+    model:
+      type: minecraft:select
+      property: minecraft:display_context
+      cases:
+      - when:
+        - gui
+        model:
+          type: minecraft:model
+          path: doudizhu:item/table_gui
+      fallback:
+        type: minecraft:model
+        path: doudizhu:item/table
+  doudizhu:tabletop:
+    material: paper
+    data:
+      item_name: <!i><green>青玉牌桌
+    model:
+      type: minecraft:model
+      path: doudizhu:item/tabletop

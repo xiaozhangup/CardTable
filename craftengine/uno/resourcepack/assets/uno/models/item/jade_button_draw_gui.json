@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "uno:item/jade_button_draw_gui"
+  }
+}

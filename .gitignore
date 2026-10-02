@@ -1,0 +1,13 @@
+# Gradle / Kotlin build output and caches
+.gradle/
+.kotlin/
+build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Python bytecode and local virtual environments
+__pycache__/
+*.py[cod]
+.venv/

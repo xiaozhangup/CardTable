@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "uno:item/jade_wild_draw_four_gui"
+  }
+}

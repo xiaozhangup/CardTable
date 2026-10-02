@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "doudizhu:item/classic_heart_q_gui"
+  }
+}

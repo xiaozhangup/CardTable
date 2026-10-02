@@ -1,0 +1,6 @@
+# Fixed upstream source revision, including its original rule-agent files.
+rlcard @ https://github.com/datamllab/rlcard/archive/d7d0a957baf4cc7225a50522adb0164bf130a9d0.tar.gz
+numpy==2.5.0
+termcolor==3.3.0
+# RLCard's agents package imports distutils.version on Python 3.12+.
+setuptools==84.0.0

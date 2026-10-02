@@ -1,0 +1,16 @@
+# 牌桌位置在 tables.yml；不同游戏通过 GameProvider 注册。
+turn-seconds: 30
+max-distance: 12.0
+max-multiplier: 64
+voice: true
+music: true
+# 先为此 Python 安装 ai/requirements.txt；可替换为实现 JSONL 协议的其他程序。
+# 不经过 shell。{data} 替换为本插件数据目录；AI 的日志写入 ai/process.log。
+ai:
+  enabled: false
+  command: ['python3', '{data}/ai/bridge.py']
+# 座椅内置原版坐姿，不需要其他坐下插件。
+default-skin: classic
+skin-prefixes:
+  classic: 'doudizhu:classic_'
+  jade: 'doudizhu:jade_'

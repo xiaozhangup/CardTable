@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "doudizhu:item/jade_heart_9_gui"
+  }
+}

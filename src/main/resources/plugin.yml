@@ -1,0 +1,13 @@
+name: CardTable
+version: ${version}
+main: me.xiaozhangup.cardtable.CardTablePlugin
+description: 可扩展的实体牌桌，内置经典及癞子斗地主与 UNO
+api-version: '26.3'
+depend: [CrabKotlin]
+softdepend: [CraftEngine, Vault]
+authors: [xiaozhangup]
+permissions:
+  cardtable.play:
+    default: true
+  cardtable.admin:
+    default: op
