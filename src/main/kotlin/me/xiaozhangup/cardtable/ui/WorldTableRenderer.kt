@@ -129,6 +129,24 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
         }
     }
 
+    fun repair(room: GameSession) {
+        val output = rendered.getValue(room.table.id)
+        val missing = output.base.any { !it.isValid } || output.frame.hasInvalidEntities() ||
+            output.pile.values.any { !it.isValid } || output.draws.any { !it.flight.entity.isValid } ||
+            bots.hasInvalidEntities(room.table.id)
+        if (!missing) return
+        val pages = output.targets.keys.mapNotNull { id -> handPages[id]?.let { id to it } }.toMap()
+        // Rebuild only rendering: the existing session keeps its cards, selections, seats and timer.
+        remove(room.table.id)
+        add(room)
+        handPages.putAll(pages)
+        val replacement = rendered.getValue(room.table.id)
+        // Recovery must not replay the latest play/draw as a new game event.
+        replacement.lastPlaySequence = output.lastPlaySequence
+        replacement.lastDrawSequence = output.lastDrawSequence
+        refresh(room)
+    }
+
     private fun participantText(view: PlayerView, active: Boolean): Component {
         val text = Component.text().color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
         if (active) {

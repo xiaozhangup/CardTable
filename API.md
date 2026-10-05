@@ -2,7 +2,7 @@
 
 公共层负责牌桌位置、加入距离与权限、实体显示、菜单、皮肤、座椅、声音和资金托管。内置斗地主和 UNO 的手牌、轮次、操作、处罚和胜负完全由各自的 `GameSession` 管理。UNO 通过同一个 `GameProvider` 注册，只依赖 `GameContext`，没有强转主插件实例；新增游戏无需修改既有玩法。
 
-扩展插件声明 `depend: [CrabKotlin, CardTable]`，编译依赖 `me.xiaozhangup.cardtable:CardTable:1.3.39:api`，另外使用 CrabKotlin 和 Paper 的 compileOnly API。运行时不要将 CardTable API 或 Kotlin 打包进扩展插件。
+扩展插件声明 `depend: [CrabKotlin, CardTable]`，编译依赖 `me.xiaozhangup.cardtable:CardTable:1.3.46:api`，另外使用 CrabKotlin 和 Paper 的 compileOnly API。运行时不要将 CardTable API 或 Kotlin 打包进扩展插件。
 
 在扩展插件的 `enable()` 中，通过 Bukkit 服务取得 `GameRegistry`，注册自己的 `GameProvider`，并传入插件实例作为 owner：
 
@@ -16,6 +16,7 @@ registry.register(myProvider, this)
 | 接口 | 职责 |
 | --- | --- |
 | `GameProvider` | 唯一 id、中文名称、validate 配置、为每张桌 create 独立 session |
+| `TableService` | 查询牌桌及玩家所在桌，通过共享层 join/leave，保留座位与显示生命周期 |
 | `GameSession` | seatCount、participants、active、join/leave/act、view、tick、close |
 | `TablePlayerJoin` | 可选接口，join(player, prepareSeat) 在原生坐下成功后再提交新参与者，支持安全替换等待中的机器人 |
 | `TableCardPile` / `TablePileLayout` | 可选接口，tableCards 返回按旧到新排列的公开桌面牌堆；tablePileLayout 选择紧凑叠放或中央散放 |
@@ -34,6 +35,22 @@ registry.register(myProvider, this)
 | `GameContext.botAI` / `CardAI` | 异步请求外部 AI，返回 `CompletableFuture<BotDecision>` |
 
 所有接口及回调在 Paper 主线程调用。每个 session 独立保存状态；无效玩家操作或配置用带中文说明的 `IllegalArgumentException`。`validate()` 必须在建立状态之前验证自己的 `TableConfig.options`；公共配置只保存位置、游戏 id、底注、牌面、时间和字符串选项，不含特定游戏规则。
+
+## 玩家入口与局结果通知 (1.3.46)
+
+通过 Bukkit 服务取得 `TableService`，用于其他插件的选桌和入座入口。`tables` 返回当前牌桌集合，`tableOf(UUID)` 查询玩家所在桌。`join(player, tableId)` 保留权限和距离校验；`join(player, tableId, teleportToTable = true)` 使用正常原生座位传送从远处直接入座，仍验证权限、当前桌占用、游戏阶段和席位。`leave(player)` 同时处理规则、座位、菜单及显示清理，不要绕过共享层直接操作 session。
+
+三个 Bukkit 事件均为主线程、不可取消的通知，不包含私牌：
+
+| 事件 | 内容与触发时机 |
+| --- | --- |
+| `TablePlayerJoinEvent` | 真人成功坐下并提交入座后，提供 table、player 和参与者快照；替换机器人也只触发一次 |
+| `TableRoundStartEvent` | 提供 table、roundId 和参与者快照；成功预扣并发牌后触发，免费局也触发，斗地主无人叫分后的重发牌不重复触发 |
+| `TableRoundEndEvent` | 提供 table、roundId、参与者和赢家快照，以及 `WIN`、`FORFEIT`、`CANCELLED` 原因；在结果结算或退款、状态处理后触发 |
+
+正常斗地主结果包含整个获胜阵营，农民胜利可以有两名赢家。机器人保留在事件中，通过 `Participant.bot` 区分；不能用玩家是否在线推断机器人。UNO 只有一名赢家。斗地主出牌阶段离桌判负为 `FORFEIT`，叫分阶段离桌、AI 故障、流局、关闭未结束牌局为 `CANCELLED`，取消事件的赢家列表为空。未成功建立 roundId 的开局失败不产生结束事件。
+
+入座事件由共享层发出；内置两玩法在规则层发出开局和结束事件。新增游戏若需相同通知，应在自己的实际开局、结算和取消位置发布这两个局事件，不通过 `active` 变化或广播文字推断结果。
 
 实现 `TablePlayerJoin` 时，游戏先完成全部入座校验并选好物理槽位，同步调用一次 `prepareSeat(participant)`，返回后再提交参与者并触发 `changed`；回调抛出异常时不得修改原有席位。公共层在回调里完成真人传送与原生坐下。内置斗地主和 UNO 未开局时优先替换座位序号最小的机器人，没有机器人再选择空位，新真人需重新准备。保留原 `GameSession.join(player)` 签名；未实现此可选接口的扩展仍使用原来的加入与坐下失败退出流程。
 

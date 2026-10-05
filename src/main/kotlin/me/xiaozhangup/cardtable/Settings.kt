@@ -19,7 +19,7 @@ data class Settings(
                 .associateWith { config.getString("skin-prefixes.$it")!! }
             val value = Settings(config.getInt("turn-seconds"), config.getDouble("max-distance"),
                 config.getInt("max-multiplier"), config.getBoolean("voice"),
-                config.getString("doudizhu-voice") ?: "female", config.getBoolean("music"),
+                config.getString("doudizhu-voice")!!, config.getBoolean("music"),
                 config.getString("default-skin")!!, skins)
             requireInput(value.turnSeconds in 5..300, "turn-seconds must be between 5 and 300.") { "turn-seconds 必须在 5..300 之间" }
             requireInput(value.maxDistance.isFinite() && value.maxDistance in 3.0..128.0, "max-distance must be finite and between 3 and 128.") { "max-distance 必须在 3..128 之间" }

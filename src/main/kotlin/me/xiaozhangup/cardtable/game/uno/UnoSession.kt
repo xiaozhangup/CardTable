@@ -16,6 +16,9 @@ import me.xiaozhangup.cardtable.api.TableHeaderView
 import me.xiaozhangup.cardtable.api.TablePlay
 import me.xiaozhangup.cardtable.api.TablePlayEvents
 import me.xiaozhangup.cardtable.api.TablePlayerJoin
+import me.xiaozhangup.cardtable.api.TableRoundStartEvent
+import me.xiaozhangup.cardtable.api.TableRoundEndEvent
+import me.xiaozhangup.cardtable.api.TableRoundEndReason
 import me.xiaozhangup.cardtable.api.TableSkip
 import me.xiaozhangup.cardtable.api.TableSkipEvents
 import me.xiaozhangup.cardtable.api.TableTurnOrder
@@ -199,10 +202,10 @@ class UnoSession(private val context: GameContext, override val table: TableConf
     }
 
     override fun close() {
-        roundId?.let(context.economy::refund)
-        roundId = null
+        val ended = refundRound()
         reset()
         seats.fill(null)
+        ended?.let { Bukkit.getPluginManager().callEvent(it) }
     }
 
     override fun act(player: Player, action: String, argument: String?) {
@@ -296,6 +299,7 @@ class UnoSession(private val context: GameContext, override val table: TableConf
             else -> Unit
         }
         context.changed()
+        Bukkit.getPluginManager().callEvent(TableRoundStartEvent(table, id, participants))
     }
 
     private fun select(own: Seat, argument: String?) {
@@ -564,6 +568,8 @@ class UnoSession(private val context: GameContext, override val table: TableConf
         val score = order.filter { it !== winner }.sumOf { UnoRules.score(it.hand) }
         val results = order.associate { it.participant.id to if (it === winner) money(order.size - 1) else money(-1) }
         context.economy.settle(roundId!!, results)
+        val ended = TableRoundEndEvent(table, roundId!!, participants,
+            listOf(winner.participant), TableRoundEndReason.WIN)
         roundId = null
         lastResult = "${winner.participant.name} 获胜, 本局得分 $score"
         context.broadcast("$lastResult${if (table.bet > 0) ", 净赢 ${format(money(order.size - 1))}, 每名输者输 ${format(table.bet)}" else ""}")
@@ -574,14 +580,22 @@ class UnoSession(private val context: GameContext, override val table: TableConf
         lastRoundPile = completedPile
         lastTablePlay = completedPlay
         lastTableDraw = completedDraw
+        Bukkit.getPluginManager().callEvent(ended)
     }
 
     private fun cancel(message: String) {
-        roundId?.let(context.economy::refund)
-        roundId = null
+        val ended = refundRound()
         lastResult = message
         context.broadcast(message)
         reset()
+        ended?.let { Bukkit.getPluginManager().callEvent(it) }
+    }
+
+    private fun refundRound(): TableRoundEndEvent? {
+        val id = roundId ?: return null // A failed reserve never committed a round.
+        context.economy.refund(id)
+        roundId = null
+        return TableRoundEndEvent(table, id, participants, emptyList(), TableRoundEndReason.CANCELLED)
     }
 
     private fun reset() {

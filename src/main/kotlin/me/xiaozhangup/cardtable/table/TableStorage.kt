@@ -7,6 +7,7 @@ import me.xiaozhangup.cardtable.util.requireInput
 import me.xiaozhangup.crab.configuration.Configuration
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.World
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -14,27 +15,28 @@ class TableStorage(private val plugin: CardTablePlugin) {
     private val file = getDataFolder().resolve("tables.yml")
     private var yaml = Configuration.empty(concurrent = false)
 
-    fun load(): List<TableConfig> {
+    fun load(world: World? = null): List<TableConfig> {
         yaml = if (file.exists()) Configuration.loadFromFile(file, concurrent = false) else Configuration.empty(concurrent = false)
         return yaml.getConfigurationSection("tables")?.getKeys(false)?.mapNotNull { id ->
             try {
                 validateId(id)
                 val section = requireNotNull(yaml.getConfigurationSection("tables.$id")) { "Table configuration must be a section." }
                 val worldName = requireNotNull(section.getString("world")) { "Table world is missing." }
-                val world = Bukkit.getWorld(worldName)
-                    ?: throw IllegalArgumentException("World '$worldName' is not loaded.")
+                if (world != null && world.name != worldName) return@mapNotNull null
+                // Unloaded worlds are deferred until WorldLoadEvent; their configuration remains saved.
+                val tableWorld = world ?: Bukkit.getWorld(worldName) ?: return@mapNotNull null
                 val bet = section.getDouble("bet")
                 require(bet.isFinite() && bet in 0.0..1_000_000.0) { "Base bet must be finite and between 0 and 1000000." }
-                val seconds = section.getInt("turn-seconds", plugin.settings.turnSeconds)
+                val seconds = section.getInt("turn-seconds")
                 require(seconds in 5..300) { "Turn duration must be between 5 and 300 seconds." }
-                val skin = section.getString("skin", plugin.settings.defaultSkin)!!
+                val skin = requireNotNull(section.getString("skin")) { "Table skin is missing." }
                 require(skin in plugin.settings.skins) { "Unknown card skin '$skin'." }
                 val options = section.getConfigurationSection("options")?.getKeys(false)
                     ?.associateWith { section.getString("options.$it")!! }.orEmpty()
                 val coordinates = listOf(section.getDouble("x"), section.getDouble("y"), section.getDouble("z"))
                 require(coordinates.all { it.isFinite() } && kotlin.math.abs(coordinates[0]) <= 29_999_980 && kotlin.math.abs(coordinates[2]) <= 29_999_980) { "Table coordinates are invalid." }
-                TableConfig(id, Location(world, coordinates[0], coordinates[1], coordinates[2], section.getDouble("yaw").toFloat(), 0f),
-                    bet, skin, seconds, section.getString("game", "doudizhu")!!, options)
+                TableConfig(id, Location(tableWorld, coordinates[0], coordinates[1], coordinates[2], section.getDouble("yaw").toFloat(), 0f),
+                    bet, skin, seconds, requireNotNull(section.getString("game")) { "Table game is missing." }, options)
             } catch (error: IllegalArgumentException) {
                 warning("Failed to load table '$id'; its configuration has been preserved.", error.stackTraceToString())
                 null

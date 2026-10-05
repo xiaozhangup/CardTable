@@ -9,6 +9,8 @@ class DisplayFrame(private val initialize: (Entity, Player?) -> Unit) {
     private val entities = linkedMapOf<String, Entity>()
     private val used = mutableSetOf<String>()
 
+    fun hasInvalidEntities(): Boolean = entities.values.any { !it.isValid }
+
     fun begin() {
         used.clear()
     }

@@ -34,14 +34,7 @@ class SeatingHook(private val plugin: CardTablePlugin) : Listener {
         // A 0.50 anchor puts the hip on the shared 0.60 stool and the eye at ground + 1.52.
         val feet = position.clone().add(0.0, ANCHOR_HEIGHT - VEHICLE_ATTACHMENT, 0.0)
         require(player.teleport(feet)) { "入座传送被取消, 请稍后再试" }
-        val anchor = position.world.spawn(position.clone().add(0.0, ANCHOR_HEIGHT, 0.0), Interaction::class.java) {
-            it.isPersistent = false
-            it.isInvulnerable = true
-            it.setGravity(false)
-            it.interactionWidth = 0f
-            it.interactionHeight = 0f
-            it.isResponsive = false
-        }
+        val anchor = spawnAnchor(position.clone().add(0.0, ANCHOR_HEIGHT, 0.0))
         val owned = OwnedSeat(player, anchor)
         ownedSeats[player.uniqueId] = owned
         anchors += anchor.uniqueId
@@ -50,6 +43,30 @@ class SeatingHook(private val plugin: CardTablePlugin) : Listener {
             anchors.remove(anchor.uniqueId)
             anchor.remove()
             throw IllegalArgumentException("坐下被取消, 请稍后再试")
+        }
+    }
+
+    private fun spawnAnchor(position: Location): Interaction = position.world.spawn(position, Interaction::class.java) {
+        it.isPersistent = false
+        it.isInvulnerable = true
+        it.setGravity(false)
+        it.interactionWidth = 0f
+        it.interactionHeight = 0f
+        it.isResponsive = false
+    }
+
+    fun repair() {
+        ownedSeats.values.toList().filter { !it.anchor.isValid }.forEach(::repair)
+    }
+
+    private fun repair(owned: OwnedSeat) {
+        anchors.remove(owned.anchor.uniqueId)
+        val anchor = spawnAnchor(owned.anchor.location)
+        ownedSeats[owned.player.uniqueId] = OwnedSeat(owned.player, anchor)
+        anchors += anchor.uniqueId
+        if (!anchor.addPassenger(owned.player)) {
+            plugin.tables.leave(owned.player)
+            plugin.tell(owned.player, "恢复坐姿被取消, 已离开牌桌, 请重新入座")
         }
     }
 
@@ -65,9 +82,11 @@ class SeatingHook(private val plugin: CardTablePlugin) : Listener {
         val player = event.entity as? Player ?: return
         val owned = ownedSeats[player.uniqueId] ?: return
         if (event.dismounted.uniqueId != owned.anchor.uniqueId) return
-        // The native stopRiding call still mutates its passenger list after this event.
+        // Wait for stopRiding/removal to finish so Shift and a deleted anchor can be distinguished.
         submitTask(delay = 1) {
-            if (ownedSeats[player.uniqueId] === owned) plugin.tables.leave(player)
+            if (ownedSeats[player.uniqueId] === owned) {
+                if (!owned.anchor.isValid) repair(owned) else plugin.tables.leave(player)
+            }
         }
     }
 

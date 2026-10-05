@@ -3,12 +3,14 @@ package me.xiaozhangup.cardtable
 import me.xiaozhangup.crab.CrabPlugin
 import me.xiaozhangup.cardtable.ai.ExternalCardAI
 import me.xiaozhangup.cardtable.api.GameRegistry
+import me.xiaozhangup.cardtable.api.TableService
 import me.xiaozhangup.cardtable.game.doudizhu.DoudizhuProvider
 import me.xiaozhangup.cardtable.game.uno.UnoProvider
 import me.xiaozhangup.cardtable.table.*
 import me.xiaozhangup.cardtable.ui.*
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.World
 import org.bukkit.command.CommandSender
 import me.xiaozhangup.crab.configuration.Configuration
 import me.xiaozhangup.cardtable.util.InputException
@@ -19,6 +21,7 @@ import me.xiaozhangup.cardtable.util.ext.warning
 import me.xiaozhangup.cardtable.util.ext.submitTask
 import me.xiaozhangup.cardtable.util.ext.releaseResourceFile
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -26,6 +29,7 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.entity.Player
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.event.server.PluginDisableEvent
+import org.bukkit.event.world.WorldLoadEvent
 import java.util.UUID
 
 class CardTablePlugin : CrabPlugin(), Listener {
@@ -78,6 +82,7 @@ class CardTablePlugin : CrabPlugin(), Listener {
         tables.register(DoudizhuProvider(), this)
         tables.register(UnoProvider(), this)
         Bukkit.getServicesManager().register(GameRegistry::class.java, tables, this, ServicePriority.Normal)
+        Bukkit.getServicesManager().register(TableService::class.java, tables, this, ServicePriority.Normal)
         listOf(this, menus, renderer).forEach { Bukkit.getPluginManager().registerEvents(it, this) }
         if (Bukkit.getPluginManager().isPluginEnabled("CraftEngine")) CraftEngineRefresh.register(this)
         TableCommands(this).register()
@@ -86,12 +91,17 @@ class CardTablePlugin : CrabPlugin(), Listener {
 
     override fun active() {
         loadTables()
-        submitTask(period = 20) { tables.tick(); economy.tick() }
+        submitTask(period = 20) {
+            seating.repair()
+            tables.rooms.values.toList().forEach { renderer.repair(it) }
+            tables.tick()
+            economy.tick()
+        }
         submitTask(period = 1) { audio.tick(); renderer.tick() }
     }
 
-    fun loadTables() {
-        storage.load().forEach { table ->
+    fun loadTables(world: World? = null) {
+        storage.load(world).filter { it.id !in tables.rooms }.forEach { table ->
             try { tables.add(table) } catch (error: IllegalArgumentException) {
                 warning("Failed to load table ${table.id}; its saved configuration was retained.", error.stackTraceToString())
             }
@@ -147,6 +157,8 @@ class CardTablePlugin : CrabPlugin(), Listener {
 
     @EventHandler
     fun join(event: PlayerJoinEvent) { economy.retry(event.player.uniqueId) }
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun worldLoad(event: WorldLoadEvent) { loadTables(event.world) }
     @EventHandler
     fun quit(event: PlayerQuitEvent) { tables.leave(event.player); audio.forget(event.player.uniqueId); renderer.forget(event.player.uniqueId) }
     @EventHandler

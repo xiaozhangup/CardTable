@@ -11,10 +11,11 @@ import org.bukkit.plugin.Plugin
 import java.util.UUID
 
 /** Shared room and provider registry. It has no dependency on a particular card game's rules. */
-class CardTableService(private val plugin: CardTablePlugin) : GameRegistry {
+class CardTableService(private val plugin: CardTablePlugin) : GameRegistry, TableService {
     private val registered = linkedMapOf<String, GameProvider>()
     private val owners = mutableMapOf<String, Plugin>()
     val rooms: MutableMap<String, GameSession> = linkedMapOf()
+    override val tables: Collection<GameSession> get() = rooms.values.toList()
     override val providers: Collection<GameProvider> get() = registered.values.toList()
 
     override fun register(provider: GameProvider, owner: Plugin) {
@@ -34,7 +35,7 @@ class CardTableService(private val plugin: CardTablePlugin) : GameRegistry {
 
     override fun provider(id: String): GameProvider? = registered[id]
     fun room(id: String): GameSession = rooms[id] ?: throw InputException("Table $id was not found.", "找不到牌桌 $id")
-    fun tableOf(playerId: UUID): GameSession? = rooms.values.firstOrNull { room -> room.participants.any { it.id == playerId } }
+    override fun tableOf(playerId: UUID): GameSession? = rooms.values.firstOrNull { room -> room.participants.any { it.id == playerId } }
 
     fun add(table: TableConfig) {
         TableStorage.validateId(table.id)
@@ -53,11 +54,13 @@ class CardTableService(private val plugin: CardTablePlugin) : GameRegistry {
         changed(table.id)
     }
 
-    fun join(player: Player, id: String) {
+    override fun join(player: Player, id: String, teleportToTable: Boolean) {
         require(player.hasPermission("cardtable.play")) { "你没有游玩牌桌的权限" }
         require(tableOf(player.uniqueId) == null) { "请先离开当前牌桌" }
         val room = room(id)
-        require(player.world == room.table.center.world && player.location.distanceSquared(room.table.center) <= plugin.settings.maxDistance * plugin.settings.maxDistance) { "请走到牌桌附近再入座" }
+        if (!teleportToTable) {
+            require(player.world == room.table.center.world && player.location.distanceSquared(room.table.center) <= plugin.settings.maxDistance * plugin.settings.maxDistance) { "请走到牌桌附近再入座" }
+        }
         if (room is TablePlayerJoin) {
             room.join(player) { participant ->
                 plugin.seating.join(player, room.table, participant.seat, room.seatCount)
@@ -75,9 +78,10 @@ class CardTableService(private val plugin: CardTablePlugin) : GameRegistry {
         plugin.menus.close(player)
         changed(room.table.id)
         plugin.tell(player, "已入座 ${room.table.id}. 右键手牌选中, 轮到你时再次右键已选牌即可出牌; 左键取消选择. 其他操作点全息按钮, Shift 离桌")
+        Bukkit.getPluginManager().callEvent(TablePlayerJoinEvent(room.table, player, room.participants))
     }
 
-    fun leave(player: Player) {
+    override fun leave(player: Player) {
         val room = tableOf(player.uniqueId) ?: return
         room.leave(player)
         plugin.seating.leave(player)

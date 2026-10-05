@@ -5,12 +5,8 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import me.xiaozhangup.cardtable.util.ext.getDataFolder
-import me.xiaozhangup.cardtable.util.ext.info
 import me.xiaozhangup.cardtable.util.ext.releaseResourceFile
-import me.xiaozhangup.cardtable.util.ext.warning
-import java.io.IOException
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.time.Instant
 
@@ -18,10 +14,6 @@ import java.time.Instant
 internal class NameMCCache {
     private val directory = getDataFolder().toPath()
     private val file = directory.resolve("namemc-cache.json")
-    private val oldNames = directory.resolve("bot-names.txt")
-    private val oldSkins = directory.resolve("bot-skins.json")
-    private val oldSource = directory.resolve("namemc-cache-source.json")
-    private val pendingCleanup = mutableListOf<Path>()
     private var document: JsonObject? = null
 
     @Synchronized
@@ -57,39 +49,17 @@ internal class NameMCCache {
 
     private fun load(): JsonObject {
         document?.let { return it }
-        if (!Files.exists(file) && !Files.exists(oldNames) && !Files.exists(oldSkins) && !Files.exists(oldSource)) {
+        if (!Files.exists(file)) {
             releaseResourceFile("namemc-cache.json")
         }
-        val data = if (Files.exists(file)) readObject(file) else JsonObject()
-        if (!data.has("names")) {
-            data.add("names", JsonArray().apply {
-                if (Files.exists(oldNames)) Files.readAllLines(oldNames).forEach(::add)
-            })
-        }
-        if (!data.has("skins")) {
-            data.add("skins", if (Files.exists(oldSkins)) readObject(oldSkins).getAsJsonArray("skins")
-                ?: throw IOException("Missing skin entries in the legacy NameMC cache") else JsonArray())
-        }
-        if (!data.has("source")) {
-            data.add("source", if (Files.exists(oldSource)) readObject(oldSource) else JsonObject())
-        }
-        require(data.get("names").isJsonArray && data.get("skins").isJsonArray && data.get("source").isJsonObject) {
+        val data = JsonParser.parseString(Files.readString(file)).asJsonObject
+        require(data.get("names")?.isJsonArray == true && data.get("skins")?.isJsonArray == true &&
+            data.get("source")?.isJsonObject == true) {
             "Invalid sections in the NameMC cache"
         }
         document = data
-        pendingCleanup += listOf(oldNames, oldSkins, oldSource).filter { Files.exists(it) }
-        if (pendingCleanup.isNotEmpty()) {
-            try {
-                persist(data)
-                info("Migrated NameMC names, skins and source metadata to namemc-cache.json.")
-            } catch (error: IOException) {
-                warning("Failed to migrate the NameMC cache; legacy files were retained: ${error.message}")
-            }
-        }
         return data
     }
-
-    private fun readObject(path: Path): JsonObject = JsonParser.parseString(Files.readString(path)).asJsonObject
 
     private fun persist(data: JsonObject) {
         Files.createDirectories(directory)
@@ -100,17 +70,6 @@ internal class NameMCCache {
             Files.move(temporary, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
         } finally {
             Files.deleteIfExists(temporary)
-        }
-        // A failed replacement leaves all legacy files intact for the next startup.
-        val remaining = pendingCleanup.iterator()
-        while (remaining.hasNext()) {
-            val old = remaining.next()
-            try {
-                Files.deleteIfExists(old)
-                remaining.remove()
-            } catch (error: IOException) {
-                warning("Failed to remove migrated NameMC cache file ${old.fileName}: ${error.message}")
-            }
         }
     }
 }

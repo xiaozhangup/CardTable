@@ -38,11 +38,11 @@ class ExternalCardAI(private val plugin: CardTablePlugin) : CardAI {
     override val available: Boolean get() = ready && process?.isAlive == true
 
     fun start() {
-        if (!plugin.configuration.getBoolean("ai.enabled", true)) {
+        if (!plugin.configuration.getBoolean("ai.enabled")) {
             unavailableReason = "机器人已关闭, 请在配置中启用 ai.enabled"
             return
         }
-        val mode = plugin.configuration.getString("ai.mode", "managed")
+        val mode = plugin.configuration.getString("ai.mode")
         val externalCommand = plugin.configuration.getStringList("ai.command").map { it.replace("{data}", getDataFolder().absolutePath) }
         submitWork {
             try {

@@ -32,6 +32,10 @@ class BotMannequins(private val plugin: CardTablePlugin) : Listener {
     private val tableKey = NamespacedKey(plugin, "table")
     private val actionKey = NamespacedKey(plugin, "action")
 
+    fun hasInvalidEntities(tableId: String): Boolean = tables[tableId]?.values?.any {
+        !it.mannequin.isValid || !it.seat.isValid
+    } == true
+
     /** The caller passes only bot participants. Existing avatars survive hand/turn refreshes. */
     fun refresh(table: TableConfig, seatCount: Int, participants: List<Participant>) {
         val current = tables.getOrPut(table.id) { linkedMapOf() }

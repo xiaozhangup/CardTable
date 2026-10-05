@@ -7,6 +7,10 @@ import me.xiaozhangup.cardtable.game.doudizhu.Rules
 import me.xiaozhangup.cardtable.table.TableConfig
 import me.xiaozhangup.cardtable.table.EconomyService
 import me.xiaozhangup.cardtable.api.BotDecision
+import me.xiaozhangup.cardtable.api.Participant
+import me.xiaozhangup.cardtable.api.TableRoundStartEvent
+import me.xiaozhangup.cardtable.api.TableRoundEndEvent
+import me.xiaozhangup.cardtable.api.TableRoundEndReason
 import me.xiaozhangup.cardtable.util.requireInput
 import me.xiaozhangup.cardtable.util.ext.warning
 import org.bukkit.Bukkit
@@ -135,6 +139,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         }
         table.roundId = roundId
         deal(table, (0..2).random())
+        Bukkit.getPluginManager().callEvent(TableRoundStartEvent(table.config, roundId, participants(table)))
     }
 
     private fun deal(table: TableRuntime, openingSeat: Int) {
@@ -277,12 +282,13 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         when (table.phase) {
             Phase.PLAYING -> {
                 message(table, "${seat.playerName} 离桌, 所属阵营判负")
-                finish(table, seat.index != table.landlord, allowSpring = false, preservePlayDisplay = false)
+                finish(table, seat.index != table.landlord, reason = TableRoundEndReason.FORFEIT, preservePlayDisplay = false)
             }
             Phase.BIDDING -> {
                 message(table, "${seat.playerName} 离桌, 尚未确定地主, 本局取消并退回预扣金额")
-                refund(table)
+                val ended = refund(table)
                 reset(table)
+                ended?.let { Bukkit.getPluginManager().callEvent(it) }
             }
             Phase.WAITING -> Unit
         }
@@ -320,8 +326,8 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         }
     }
 
-    private fun finish(table: TableRuntime, landlordWon: Boolean, allowSpring: Boolean = true, preservePlayDisplay: Boolean = true) {
-        if (allowSpring) {
+    private fun finish(table: TableRuntime, landlordWon: Boolean, reason: TableRoundEndReason = TableRoundEndReason.WIN, preservePlayDisplay: Boolean = true) {
+        if (reason == TableRoundEndReason.WIN) {
             val spring = landlordWon && table.seats.filterIndexed { index, _ -> index != table.landlord }.all { it!!.playedTurns == 0 }
             val antiSpring = !landlordWon && table.seats[table.landlord]!!.playedTurns == 1
             if (spring || antiSpring) {
@@ -338,11 +344,15 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
             seat.playerId to amount
         }
         economy.settle(table.roundId!!, results)
+        val players = participants(table)
+        val ended = TableRoundEndEvent(table.config, table.roundId!!, players,
+            players.filter { (it.seat == table.landlord) == landlordWon }, reason)
         table.roundId = null
         message(table, "${if (landlordWon) "地主" else "农民"}获胜! 叫分 ${table.highestBid} × 倍数 ${table.multiplier}${if (table.config.bet > 0) ", 每份 ${String.format(java.util.Locale.ROOT, "%.2f", unit)}" else ""}")
         onVoice(table, if (landlordWon) "landlord_win" else "farmer_win")
         reset(table, preservePlayDisplay)
         onChange(table)
+        Bukkit.getPluginManager().callEvent(ended)
     }
 
     private fun reset(table: TableRuntime, preservePlayDisplay: Boolean = false) {
@@ -367,17 +377,23 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         }
     }
 
-    private fun refund(table: TableRuntime) {
-        table.roundId?.let(economy::refund)
+    private fun refund(table: TableRuntime): TableRoundEndEvent? {
+        val roundId = table.roundId ?: return null
+        economy.refund(roundId)
         table.roundId = null
+        return TableRoundEndEvent(table.config, roundId, participants(table), emptyList(), TableRoundEndReason.CANCELLED)
+    }
+
+    private fun participants(table: TableRuntime): List<Participant> = table.seats.filterNotNull().map {
+        Participant(it.playerId, it.playerName, it.index, it.bot)
     }
 
     fun remove(id: String) {
         val table = tables[id] ?: throw IllegalArgumentException("找不到牌桌 $id")
-        clearDecision(table)
-        table.playedPlays.clear()
-        refund(table)
+        val ended = refund(table)
+        reset(table)
         table.seats.filterNotNull().forEach { onLeave(table, it) }
+        ended?.let { Bukkit.getPluginManager().callEvent(it) }
         tables.remove(id)
         onRemove(table)
     }
@@ -444,9 +460,10 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         } catch (error: Exception) {
             warning("Dou Dizhu AI decision failed at table '${table.config.id}':\n${error.stackTraceToString()}")
             message(table, "外部 AI 决策失败, 本局取消, 请检查 AI 程序")
-            refund(table)
+            val ended = refund(table)
             reset(table)
             onChange(table)
+            ended?.let { Bukkit.getPluginManager().callEvent(it) }
         }
     }
 

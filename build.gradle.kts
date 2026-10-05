@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.xiaozhangup.cardtable"
-version = "1.3.45"
+version = "1.3.49"
 
 repositories {
     mavenLocal()
