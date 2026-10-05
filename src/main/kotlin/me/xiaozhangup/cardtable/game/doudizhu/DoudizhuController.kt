@@ -7,6 +7,8 @@ import me.xiaozhangup.cardtable.game.doudizhu.Rules
 import me.xiaozhangup.cardtable.table.TableConfig
 import me.xiaozhangup.cardtable.table.EconomyService
 import me.xiaozhangup.cardtable.api.BotDecision
+import me.xiaozhangup.cardtable.util.requireInput
+import me.xiaozhangup.cardtable.util.ext.warning
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.math.BigDecimal
@@ -63,43 +65,47 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
     var onRemove: (TableRuntime) -> Unit = {}
 
     fun add(config: TableConfig) {
-        require(config.id !in tables) { "牌桌 ${config.id} 已存在。" }
+        requireInput(config.id !in tables, "Table '${config.id}' already exists") { "牌桌 ${config.id} 已存在" }
         tables[config.id] = TableRuntime(config)
         onChange(tables.getValue(config.id))
     }
 
     fun tableOf(playerId: UUID): TableRuntime? = tables.values.firstOrNull { table -> table.seats.any { it?.playerId == playerId } }
 
-    fun join(player: Player, id: String) {
-        require(tableOf(player.uniqueId) == null) { "你已经在一张牌桌上，请先离开。" }
-        joinActor(player.uniqueId, player.name, id, false)
+    fun join(player: Player, id: String, prepareSeat: (Seat) -> Unit = {}) {
+        require(tableOf(player.uniqueId) == null) { "你已经在一张牌桌上, 请先离开" }
+        joinActor(player.uniqueId, player.name, id, false, prepareSeat)
     }
 
     fun joinBot(botId: UUID, name: String, id: String): Seat {
         val table = tables.getValue(id)
-        require(table.config.bet == 0.0) { "人机只支持免费桌。" }
-        require(table.seats.filterNotNull().any { !it.bot }) { "请先由真人入座。" }
+        require(table.config.bet == 0.0) { "机器人只支持免费桌" }
+        require(table.seats.filterNotNull().any { !it.bot }) { "请先由真人入座" }
         return joinActor(botId, name, id, true)
     }
 
-    private fun joinActor(actorId: UUID, name: String, id: String, bot: Boolean): Seat {
-        val table = tables[id] ?: throw IllegalArgumentException("找不到牌桌 $id。")
-        require(table.phase == Phase.WAITING) { "这张牌桌正在游戏中。" }
-        val index = table.seats.indexOfFirst { it == null }
-        require(index >= 0) { "这张牌桌已经坐满了。" }
+    private fun joinActor(actorId: UUID, name: String, id: String, bot: Boolean, prepareSeat: (Seat) -> Unit = {}): Seat {
+        val table = tables[id] ?: throw IllegalArgumentException("找不到牌桌 $id")
+        require(table.phase == Phase.WAITING) { "这张牌桌正在游戏中" }
+        val botIndex = if (bot) -1 else table.seats.indexOfFirst { it?.bot == true }
+        val index = if (botIndex >= 0) botIndex else table.seats.indexOfFirst { it == null }
+        require(index >= 0) { "这张牌桌已经坐满了" }
         if (table.config.bet > 0) economy.ensureAvailable()
         val seat = Seat(actorId, name, index, bot = bot, ready = bot)
+        prepareSeat(seat)
+        val replaced = table.seats[index]
         table.seats[index] = seat
+        replaced?.let { onLeave(table, it) }
         onJoin(table, seat)
-        message(table, "$name${if (bot) "（人机）" else ""} 入座（${table.seats.count { it != null }}/3）。")
+        message(table, "$name${if (bot) "(机器人)" else ""} 入座(${table.seats.count { it != null }}/3)")
         onChange(table)
         return seat
     }
 
     fun removeBot(id: UUID) {
         val (table, seat) = requireSeat(id)
-        require(seat.bot) { "这个席位不是人机。" }
-        require(table.phase == Phase.WAITING) { "请等本局结束后移除人机。" }
+        require(seat.bot) { "这个席位不是机器人" }
+        require(table.phase == Phase.WAITING) { "请等本局结束后移除机器人" }
         table.seats[seat.index] = null
         onLeave(table, seat)
         onChange(table)
@@ -107,16 +113,16 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
 
     fun ready(player: Player) {
         val (table, seat) = requireSeat(player)
-        require(table.phase == Phase.WAITING) { "本局已开始。" }
+        require(table.phase == Phase.WAITING) { "本局已开始" }
         seat.ready = !seat.ready
-        message(table, "${seat.playerName} ${if (seat.ready) "已准备" else "取消了准备"}。")
+        message(table, "${seat.playerName} ${if (seat.ready) "准备就绪" else "取消了准备"}")
         onChange(table)
         if (table.seats.all { it?.ready == true }) start(table)
     }
 
     private fun start(table: TableRuntime) {
-        require(table.seats.filterNotNull().any { !it.bot }) { "至少需要一名真人。" }
-        require(table.config.bet == 0.0 || table.seats.filterNotNull().none { it.bot }) { "人机只支持免费桌。" }
+        require(table.seats.filterNotNull().any { !it.bot }) { "至少需要一名真人" }
+        require(table.config.bet == 0.0 || table.seats.filterNotNull().none { it.bot }) { "机器人只支持免费桌" }
         val roundId = UUID.randomUUID().toString()
         val reserve = money(table.config.bet, 6L * plugin.settings.maxMultiplier)
         try {
@@ -157,7 +163,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         table.bidsRemaining = 3
         table.consecutivePasses = 0
         table.remainingSeconds = table.config.turnSeconds
-        message(table, "发牌完成，请 ${current(table).playerName} 叫分${table.wildRank?.let { "，本局癞子：${rankLabel(it)}" } ?: ""}。")
+        message(table, "发牌完成, 请 ${current(table).playerName} 叫分${table.wildRank?.let { ", 本局癞子: ${rankLabel(it)}" } ?: ""}")
         onVoice(table, "deal")
         onChange(table)
     }
@@ -168,9 +174,11 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
     }
 
     private fun bid(table: TableRuntime, seat: Seat, score: Int) {
-        require(score in 0..3) { "叫分只能是 0、1、2、3。" }
-        require(score == 0 || score > table.highestBid) { "叫分必须高于当前的 ${table.highestBid} 分，或选择不叫。" }
-        message(table, "${seat.playerName}：${if (score == 0) "不叫" else "${score} 分"}。")
+        requireInput(score in 0..3, "Dou Dizhu bid must be between 0 and 3") { "叫分只能是 0, 1, 2, 3" }
+        requireInput(score == 0 || score > table.highestBid, "Dou Dizhu bid must exceed ${table.highestBid}, or be 0 to pass") {
+            "叫分必须高于当前的 ${table.highestBid} 分, 或选择不叫"
+        }
+        message(table, "${seat.playerName}: ${if (score == 0) "不叫" else "${score} 分"}")
         onVoice(table, "bid_$score")
         if (score > table.highestBid) {
             table.highestBid = score
@@ -179,7 +187,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         table.bidsRemaining--
         if (score == 3 || table.bidsRemaining == 0) {
             if (table.landlord == -1) {
-                message(table, "无人叫地主，重新发牌。")
+                message(table, "无人叫地主, 重新发牌")
                 deal(table, (table.openingSeat + 1) % 3)
                 return
             }
@@ -189,7 +197,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
             table.phase = Phase.PLAYING
             table.currentSeat = table.landlord
             table.remainingSeconds = table.config.turnSeconds
-            message(table, "${landlord.playerName} 成为地主（${table.highestBid} 分），由地主先出牌。")
+            message(table, "${landlord.playerName} 成为地主(${table.highestBid} 分), 由地主先出牌")
             onVoice(table, "start")
         } else {
             next(table)
@@ -200,9 +208,9 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
     fun play(player: Player) {
         val (table, seat) = requireTurn(player, Phase.PLAYING)
         val cards = seat.hand.filter { it.id in seat.selected }
-        require(cards.isNotEmpty()) { "请先选中要出的牌。" }
+        require(cards.isNotEmpty()) { "请先选中要出的牌" }
         val play = Rules.resolve(cards, table.wildRank, table.previous)
-            ?: throw IllegalArgumentException("选中的牌型不合法，或无法压过上一手牌。")
+            ?: throw IllegalArgumentException("选中的牌型不合法, 或无法压过上一手牌")
         play(table, seat, play)
     }
 
@@ -220,7 +228,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         table.previousSeat = seat.index
         table.consecutivePasses = 0
         if (play.isBomb) doubleMultiplier(table)
-        message(table, "${seat.playerName} 出牌：${play.label}（${play.cards.joinToString(" ") { it.label }}）${if (play.isBomb) "，倍数 ${table.multiplier}" else ""}。")
+        message(table, "${seat.playerName} 出牌: ${play.label}(${play.cards.joinToString(" ") { it.label }})${if (play.isBomb) ", 倍数 ${table.multiplier}" else ""}")
         onVoice(table, "play_${play.type.name.lowercase()}")
         if (seat.hand.isEmpty()) {
             finish(table, seat.index == table.landlord)
@@ -232,7 +240,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
 
     fun pass(player: Player) {
         val (table, seat) = requireTurn(player, Phase.PLAYING)
-        require(table.previous != null) { "你是首出，必须出牌。" }
+        require(table.previous != null) { "你是首出, 必须出牌" }
         pass(table, seat)
     }
 
@@ -240,7 +248,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         table.trace += seat.index to "pass"
         seat.selected.clear()
         table.consecutivePasses++
-        message(table, "${seat.playerName}：不要。")
+        message(table, "${seat.playerName}: 不要")
         onVoice(table, "pass")
         if (table.consecutivePasses == 2) {
             table.previous = null
@@ -256,7 +264,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         val suggested = Rules.hint(seat.hand, table.wildRank, table.previous)
         seat.selected.clear()
         if (suggested == null) {
-            player.sendMessage("§e没有可以压过上一手的牌，可以选择不要。")
+            plugin.tell(player, "§e没有可以压过上一手的牌, 可以选择不要")
         } else {
             seat.selected.addAll(suggested.cards.map { it.id })
         }
@@ -268,11 +276,11 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         val seat = table.seats.first { it?.playerId == player.uniqueId }!!
         when (table.phase) {
             Phase.PLAYING -> {
-                message(table, "${seat.playerName} 离桌，所属阵营判负。")
+                message(table, "${seat.playerName} 离桌, 所属阵营判负")
                 finish(table, seat.index != table.landlord, allowSpring = false, preservePlayDisplay = false)
             }
             Phase.BIDDING -> {
-                message(table, "${seat.playerName} 离桌，尚未确定地主，本局取消并退回预扣金额。")
+                message(table, "${seat.playerName} 离桌, 尚未确定地主, 本局取消并退回预扣金额")
                 refund(table)
                 reset(table)
             }
@@ -280,7 +288,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         }
         table.seats[seat.index] = null
         onLeave(table, seat)
-        message(table, "${seat.playerName} 离开牌桌。")
+        message(table, "${seat.playerName} 离开牌桌")
         if (table.seats.filterNotNull().none { !it.bot }) {
             table.seats.filterNotNull().forEach { bot -> table.seats[bot.index] = null; onLeave(table, bot) }
         }
@@ -300,7 +308,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
                 continue
             }
             val seat = current(table)
-            message(table, "${seat.playerName} 操作超时，已自动${if (table.phase == Phase.BIDDING) "不叫" else if (table.previous != null) "不要" else "出最小单牌"}。")
+            message(table, "${seat.playerName} 操作超时, 已自动${if (table.phase == Phase.BIDDING) "不叫" else if (table.previous != null) "不要" else "出最小单牌"}")
             if (table.phase == Phase.BIDDING) {
                 bid(table, seat, 0)
             } else if (table.previous != null) {
@@ -318,7 +326,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
             val antiSpring = !landlordWon && table.seats[table.landlord]!!.playedTurns == 1
             if (spring || antiSpring) {
                 doubleMultiplier(table)
-                message(table, "${if (spring) "春天" else "反春天"}！倍数升至 ${table.multiplier}。")
+                message(table, "${if (spring) "春天" else "反春天"}! 倍数升至 ${table.multiplier}")
                 onVoice(table, if (spring) "spring" else "anti_spring")
             }
         }
@@ -331,7 +339,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
         }
         economy.settle(table.roundId!!, results)
         table.roundId = null
-        message(table, "${if (landlordWon) "地主" else "农民"}获胜！叫分 ${table.highestBid} × 倍数 ${table.multiplier}${if (table.config.bet > 0) "，每份 ${String.format(java.util.Locale.ROOT, "%.2f", unit)}" else ""}。")
+        message(table, "${if (landlordWon) "地主" else "农民"}获胜! 叫分 ${table.highestBid} × 倍数 ${table.multiplier}${if (table.config.bet > 0) ", 每份 ${String.format(java.util.Locale.ROOT, "%.2f", unit)}" else ""}")
         onVoice(table, if (landlordWon) "landlord_win" else "farmer_win")
         reset(table, preservePlayDisplay)
         onChange(table)
@@ -365,7 +373,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
     }
 
     fun remove(id: String) {
-        val table = tables[id] ?: throw IllegalArgumentException("找不到牌桌 $id。")
+        val table = tables[id] ?: throw IllegalArgumentException("找不到牌桌 $id")
         clearDecision(table)
         table.playedPlays.clear()
         refund(table)
@@ -383,7 +391,7 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
     }
 
     private fun requireSeat(id: UUID): Pair<TableRuntime, Seat> {
-        val table = tableOf(id) ?: throw IllegalArgumentException("请先加入一张牌桌。")
+        val table = tableOf(id) ?: throw IllegalArgumentException("请先加入一张牌桌")
         return table to table.seats.first { it?.playerId == id }!!
     }
 
@@ -415,25 +423,27 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
             val decision = pending.join()
             when (table.phase) {
                 Phase.BIDDING -> {
-                    require(decision.action == "bid") { "AI 没有返回叫分" }
-                    bid(table, seat, decision.argument?.toIntOrNull() ?: throw IllegalArgumentException("AI 叫分无效"))
+                    require(decision.action == "bid") { "AI did not return a bid action" }
+                    bid(table, seat, decision.argument?.toIntOrNull() ?: throw IllegalArgumentException("AI returned an invalid bid"))
                 }
                 Phase.PLAYING -> when (decision.action) {
-                    "pass" -> { require(table.previous != null) { "AI 首出不能不要" }; pass(table, seat) }
+                    "pass" -> { require(table.previous != null) { "AI cannot pass when leading" }; pass(table, seat) }
                     "play" -> {
-                        val ids = decision.argument?.split(',')?.map { it.toInt() } ?: throw IllegalArgumentException("AI 没有返回牌编号")
-                        require(ids.distinct().size == ids.size && ids.all { id -> seat.hand.any { it.id == id } }) { "AI 返回的牌不在自己手中" }
+                        val ids = decision.argument?.split(',')?.map { it.toInt() } ?: throw IllegalArgumentException("AI did not return card IDs")
+                        require(ids.distinct().size == ids.size && ids.all { id -> seat.hand.any { it.id == id } }) {
+                            "AI returned duplicate card IDs or cards not in its hand"
+                        }
                         val cards = ids.map { id -> seat.hand.first { it.id == id } }
-                        val play = Rules.resolve(cards, table.wildRank, table.previous) ?: throw IllegalArgumentException("AI 返回非法牌型")
+                        val play = Rules.resolve(cards, table.wildRank, table.previous) ?: throw IllegalArgumentException("AI returned an invalid card combination")
                         play(table, seat, play)
                     }
-                    else -> throw IllegalArgumentException("AI 返回未知动作 ${decision.action}")
+                    else -> throw IllegalArgumentException("AI returned an unsupported action: ${decision.action}")
                 }
                 Phase.WAITING -> Unit
             }
         } catch (error: Exception) {
-            plugin.logger.warning("牌桌 ${table.config.id} AI 失败：${error.cause?.message ?: error.message}")
-            message(table, "外部 AI 决策失败，本局取消，请检查 AI 程序。")
+            warning("Dou Dizhu AI decision failed at table '${table.config.id}':\n${error.stackTraceToString()}")
+            message(table, "外部 AI 决策失败, 本局取消, 请检查 AI 程序")
             refund(table)
             reset(table)
             onChange(table)
@@ -452,8 +462,12 @@ class DoudizhuController(private val plugin: CardTablePlugin) {
 
     private fun requireTurn(player: Player, phase: Phase): Pair<TableRuntime, Seat> {
         val (table, seat) = requireSeat(player)
-        require(table.phase == phase) { if (phase == Phase.BIDDING) "现在不是叫分阶段。" else "现在不是出牌阶段。" }
-        require(table.currentSeat == seat.index) { "还没轮到你，请等待 ${current(table).playerName}。" }
+        requireInput(table.phase == phase, "Dou Dizhu table '${table.config.id}' is in phase ${table.phase}; expected $phase") {
+            if (phase == Phase.BIDDING) "现在不是叫分阶段" else "现在不是出牌阶段"
+        }
+        requireInput(table.currentSeat == seat.index, "It is not player '${seat.playerId}'s turn at table '${table.config.id}'") {
+            "还没轮到你, 请等待 ${current(table).playerName}"
+        }
         return table to seat
     }
 

@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "uno:item/classic_yellow_draw_two_gui"
-  }
-}

@@ -2,6 +2,7 @@ package me.xiaozhangup.cardtable.ui
 
 import me.xiaozhangup.cardtable.CardTablePlugin
 import me.xiaozhangup.cardtable.api.CardFace
+import me.xiaozhangup.crab.util.itemStack
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -42,8 +43,14 @@ class ItemProvider(private val plugin: CardTablePlugin) {
         icon(id, title, lore.map(::description), fallback)
 
     fun icon(id: String, title: String, lore: List<Component> = emptyList(), fallback: Material = Material.PAPER,
-             titleColor: NamedTextColor = NamedTextColor.WHITE): ItemStack {
-        val result = model(id, fallback).stack
+             titleColor: NamedTextColor = NamedTextColor.WHITE): ItemStack =
+        formatIcon(model(id, fallback).stack, title, lore, titleColor)
+
+    fun menuIcon(material: Material, title: String, lore: List<Component> = emptyList(),
+                 titleColor: NamedTextColor = NamedTextColor.WHITE): ItemStack =
+        formatIcon(itemStack(material), title, lore, titleColor)
+
+    private fun formatIcon(result: ItemStack, title: String, lore: List<Component>, titleColor: NamedTextColor): ItemStack {
         result.editMeta { meta ->
             meta.displayName(text(title, titleColor))
             meta.lore(lore.map { it.decoration(TextDecoration.ITALIC, false) })
@@ -52,7 +59,7 @@ class ItemProvider(private val plugin: CardTablePlugin) {
         return result
     }
 
-    fun decoration(material: Material): ItemStack = ItemStack(material).apply { editMeta { it.setHideTooltip(true) } }
+    fun decoration(material: Material): ItemStack = itemStack(material) { hideTooltip() }
     fun description(value: String): Component = text(value, NamedTextColor.GRAY)
     fun parameter(label: String, value: Any): Component = description("$label: ").append(text(value.toString(), NamedTextColor.WHITE))
     fun hint(value: String): Component = text(value, NamedTextColor.YELLOW)

@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
-"""Regenerate original Minecraft pixel card art, flat models and synthetic voices.
+"""Regenerate original Minecraft pixel card art, flat models and note-block music.
 
 Use --visuals-only to regenerate art, models and item definitions while preserving
 audio/music; --art-only redraws only PNGs and the preview.
-Dependencies: Python 3, Pillow, PyYAML and Noto CJK fonts; full builds also need espeak-ng and ffmpeg.
+Dependencies: Python 3, Pillow, PyYAML and Noto CJK fonts.
+Imported voices are preserved in every mode; rebuild them with import_doudizhu_voices.py.
 All drawings and the melody are authored here; no reference image is sampled.
 """
 from __future__ import annotations
 
 import argparse
 import json
-import subprocess
-import tempfile
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-PACK = ROOT / "craftengine" / "doudizhu"
+PACK = ROOT / "craftengine" / "cardtable"
 ASSETS = PACK / "resourcepack" / "assets" / "doudizhu"
 LATIN = Path("/usr/share/fonts/google-noto-vf/NotoSans[wght].ttf")
 CHINESE = Path("/usr/share/fonts/google-noto-sans-cjk-fonts/NotoSansCJK-Bold.ttc")
@@ -41,14 +40,6 @@ BUTTONS = {
     "music": ("音乐", "#397788", "music"),
     "skin": ("牌面", "#508069", "cards"),
     "table": ("牌桌", "#80683e", "table"),
-}
-VOICES = {
-    "single": "单张", "pair": "对子", "triple": "三张", "triple_single": "三带一",
-    "triple_pair": "三带二", "straight": "顺子", "pair_straight": "连对", "airplane": "飞机",
-    "airplane_single": "飞机带单牌", "airplane_pair": "飞机带对子", "four_single": "四带二",
-    "four_pair": "四带两对", "bomb": "炸弹", "rocket": "王炸", "pass": "要不起",
-    "bid_0": "不叫", "bid_1": "一分", "bid_2": "两分", "bid_3": "三分",
-    "start": "游戏开始", "win": "你赢了", "lose": "再接再厉", "turn": "轮到你出牌了", "wild": "这张牌是癞子",
 }
 
 
@@ -277,43 +268,6 @@ def draw_table():
     return image
 
 
-def gui_card(skin_name, name=None, rank=None, big=None):
-    """Native 16px identification tile, not a downsampled world card."""
-    skin = SKINS[skin_name]
-    image = Image.new("RGBA", (16, 16), skin["accent"])
-    d = ImageDraw.Draw(image)
-    d.rectangle((1, 1, 14, 14), fill=skin["paper"])
-    if rank is not None:
-        ink = skin["red"] if name in ("heart", "diamond") else skin["ink"]
-        mini_text(d, 2, 0, rank, ink, 2)
-        bitmap(d, 10, 11, MINI_SUITS[name], ink)
-    elif big is not None:
-        ink = skin["red"] if big else skin["ink"]
-        if big:
-            bitmap(d, 3, 3, ["100010001", "110111011", "111111111", "011111110", "011111110"], ink)
-        else:
-            bitmap(d, 3, 3, ["001000100", "011101110", "111111111", "100111001", "000111000"], ink)
-        d.rectangle((5, 8, 10, 12), fill=ink)
-        d.point((6, 9), fill=skin["paper"])
-        d.point((9, 9), fill=skin["paper"])
-        d.line((6, 11, 9, 11), fill=skin["paper"])
-    else:
-        d.rectangle((1, 1, 14, 14), fill=skin["back"])
-        bitmap(d, 3, 3, MINI_SUITS["spade"], skin["paper"], 2)
-    return image
-
-
-def gui_model(namespace, asset):
-    return {"parent": "minecraft:item/generated", "textures": {"layer0": f"{namespace}:item/{asset}_gui"}}
-
-
-def context_model(namespace, asset):
-    """CE 26.10's SelectItemModel/DisplayContextSelectProperty schema."""
-    return {"type": "minecraft:select", "property": "minecraft:display_context",
-            "cases": [{"when": ["gui"], "model": {"type": "minecraft:model", "path": f"{namespace}:item/{asset}_gui"}}],
-            "fallback": {"type": "minecraft:model", "path": f"{namespace}:item/{asset}"}}
-
-
 def save_json(path, obj):
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
@@ -341,26 +295,6 @@ def card_model(asset_id, back_id, button=False):
             "firstperson_righthand":{"rotation":[0,180,0],"translation":[0,0,0],"scale":[.7,.7,.7]}}}
 
 
-def voice_assets():
-    voice_dir=ASSETS/"sounds"/"voice"
-    voice_dir.mkdir(parents=True,exist_ok=True)
-    voices=dict(VOICES)
-    ranks={"3":"三","4":"四","5":"五","6":"六","7":"七","8":"八","9":"九","10":"十","j":"杰克","q":"皇后","k":"国王","a":"尖","2":"二","joker_small":"小王","joker_big":"大王"}
-    voices.update({"rank_"+key:value for key,value in ranks.items()})
-    sounds={}
-    with tempfile.TemporaryDirectory(prefix="doudizhu-tts-") as temp:
-        for event,text in voices.items():
-            wav=Path(temp)/(event+".wav")
-            subprocess.run(["espeak-ng","-v","cmn","-s","150","-p","47","-a","165","-w",str(wav),text],check=True)
-            subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-i",str(wav),"-af","highpass=f=90,lowpass=f=7500,loudnorm=I=-17:TP=-2:LRA=8","-ac","1","-ar","22050","-c:a","libvorbis","-q:a","5",str(voice_dir/(event+".ogg"))],check=True)
-            sounds["voice."+event]={"subtitle":"subtitles.doudizhu."+event,"sounds":[{"name":"doudizhu:voice/"+event,"stream":False}]}
-    save_json(ASSETS/"sounds.json",sounds)
-    subtitles={"subtitles.doudizhu."+event:"斗地主："+text for event,text in voices.items()}
-    save_json(ASSETS/"lang"/"zh_cn.json",subtitles)
-    save_json(ASSETS/"lang"/"en_us.json",subtitles)
-    return voices
-
-
 def music_assets():
     """A 16-beat original pentatonic miniature, 100 BPM, looping at tick 192."""
     melody=[(6,.5),(10,.5),(13,1),(10,.5),(8,.5),(6,1),(3,.5),(6,.5),(8,1),(10,1),(6,1),
@@ -383,10 +317,10 @@ def music_assets():
 
 
 def preview(images):
-    image = Image.new("RGB", (1920, 1240), "#14231f")
+    image = Image.new("RGB", (1920, 1075), "#14231f")
     d = ImageDraw.Draw(image)
     label(d, (50, 42), "Minecraft 像素牌 · 薄纸边、大牌点与清晰花色", 32, "#f2eedf", True, "lm")
-    label(d, (50, 87), "世界牌 32 × 48 原生像素 · 独立菜单图标 16 × 16 · 以下放大均为最近邻", 22, "#aebfb1", True, "lm")
+    label(d, (50, 87), "世界牌 32 × 48 原生像素 · 桌面操作图标 16 × 16 · 以下放大均为最近邻", 22, "#aebfb1", True, "lm")
     samples = ["spade_a", "heart_10", "club_k", "diamond_q", "spade_j", "heart_2", "joker_small", "joker_big", "back"]
     for row, skin in enumerate(SKINS):
         y = 125 + row * 300
@@ -395,23 +329,19 @@ def preview(images):
             x = 50 + index * 205
             thumb = images[f"{skin}_{asset}"].resize((160, 240), Image.Resampling.NEAREST)
             image.paste(thumb, (x, y + 23), thumb)
-    label(d, (50, 745), "菜单识别图标：左侧为真实 16 × 16，右侧放大 6 倍；牌点无需悬浮文字即可识别。", 22, "#aebfb1", True, "lm")
-    for index, asset in enumerate(samples):
-        x = 50 + index * 205
-        tile = images[f"classic_{asset}_gui"]
-        image.paste(tile, (x, 794), tile)
-        image.paste(tile.resize((96, 96), Image.Resampling.NEAREST), (x + 32, 772))
-    label(d, (50, 912), "原版界面风格的方形操作图标 · 中文动作交给菜单名称与桌面标签", 22, "#aebfb1", True, "lm")
+    label(d, (50, 747), "桌面方形操作图标 · 中文动作交给桌面标签", 22, "#aebfb1", True, "lm")
     for index, asset in enumerate(BUTTONS):
         x = 50 + (index % 12) * 152
         tile = images[asset]
-        image.paste(tile.resize((80, 80), Image.Resampling.NEAREST), (x, 948))
-        label(d, (x + 40, 1053), BUTTONS[asset][0], 16, "#e2e7da", True)
+        image.paste(tile.resize((80, 80), Image.Resampling.NEAREST), (x, 783))
+        label(d, (x + 40, 888), BUTTONS[asset][0], 16, "#e2e7da", True)
     table = images["tabletop"].resize((128, 128), Image.Resampling.NEAREST)
-    image.paste(table, (50, 1090))
-    label(d, (205, 1120), "沉静深绿毡面与细木边，去掉桌心文字；牌面、按钮均只用整数像素。", 21, "#aebfb1", True, "lm")
-    label(d, (205, 1165), "图标像素尺寸来自实际输出贴图；客户端朝向、遮挡与点击仍需在游戏内验收。", 20, "#aebfb1", True, "lm")
-    image.save(ROOT / "assets-preview.png")
+    image.paste(table, (50, 925))
+    label(d, (205, 955), "沉静深绿毡面与细木边，去掉桌心文字；牌面、按钮均只用整数像素。", 21, "#aebfb1", True, "lm")
+    label(d, (205, 1000), "图标像素尺寸来自实际输出贴图；客户端朝向、遮挡与点击仍需在游戏内验收。", 20, "#aebfb1", True, "lm")
+    preview_dir = ROOT / "build" / "previews"
+    preview_dir.mkdir(parents=True, exist_ok=True)
+    image.save(preview_dir / "assets-preview.png")
 
 
 def art_assets():
@@ -421,14 +351,11 @@ def art_assets():
     images = {}
     for skin in SKINS:
         images[skin + "_back"] = draw_back(skin)
-        images[skin + "_back_gui"] = gui_card(skin)
         for name in SUITS:
             for rank in RANKS:
                 images[skin + "_" + name + "_" + rank] = draw_card(skin, name, rank)
-                images[skin + "_" + name + "_" + rank + "_gui"] = gui_card(skin, name, rank)
         for big in (False, True):
             images[skin + "_joker_" + ("big" if big else "small")] = draw_joker(skin, big)
-            images[skin + "_joker_" + ("big" if big else "small") + "_gui"] = gui_card(skin, big=big)
     for asset, (text, color, kind) in BUTTONS.items():
         images[asset] = draw_button(text, color, kind)
     images["tabletop"] = draw_table()
@@ -453,21 +380,18 @@ def main():
         directory.mkdir(parents=True,exist_ok=True)
     images={}
     items={}
-    def item(asset,image,display_name,back=None,button=False,gui=None):
+    def item(asset,image,display_name,back=None,button=False):
         images[asset]=image
         image.save(ASSETS/"textures"/"item"/(asset+".png"))
         save_json(ASSETS/"models"/"item"/(asset+".json"),card_model(asset,back or asset,button))
-        images[asset+"_gui"] = gui if gui is not None else image
-        images[asset+"_gui"].save(ASSETS/"textures"/"item"/(asset+"_gui.png"))
-        save_json(ASSETS/"models"/"item"/(asset+"_gui.json"),gui_model("doudizhu",asset))
-        items["doudizhu:"+asset]={"material":"paper","data":{"item_name":"<!i><white>"+display_name},"model":context_model("doudizhu",asset)}
+        items["doudizhu:"+asset]={"material":"paper","data":{"item_name":"<!i><white>"+display_name},"model":{"type":"minecraft:model","path":f"doudizhu:item/{asset}"}}
     for skin in SKINS:
-        item(skin+"_back",draw_back(skin),SKINS[skin]["name"]+"牌背",gui=gui_card(skin))
+        item(skin+"_back",draw_back(skin),SKINS[skin]["name"]+"牌背")
         for suit_name,cn in SUITS.items():
             for rank in RANKS:
-                item(skin+"_"+suit_name+"_"+rank,draw_card(skin,suit_name,rank),cn+rank.upper(),skin+"_back",gui=gui_card(skin,suit_name,rank))
+                item(skin+"_"+suit_name+"_"+rank,draw_card(skin,suit_name,rank),cn+rank.upper(),skin+"_back")
         for big in (False,True):
-            item(skin+"_joker_"+("big" if big else "small"),draw_joker(skin,big),"大王" if big else "小王",skin+"_back",gui=gui_card(skin,big=big))
+            item(skin+"_joker_"+("big" if big else "small"),draw_joker(skin,big),"大王" if big else "小王",skin+"_back")
     for asset,(text,color,kind) in BUTTONS.items():
         item(asset,draw_button(text,color,kind),text,button=True)
     Image.new("RGBA",(16,16),"#fff6dc").save(ASSETS/"textures"/"item"/"card_edge.png")
@@ -481,25 +405,23 @@ def main():
         "display":{"fixed":{"rotation":[0,0,0],"translation":[0,0,0],"scale":[1,1,1]},"gui":{"rotation":[30,45,0],"translation":[0,0,0],"scale":[.5,.5,.5]}}}
     save_json(ASSETS/"models"/"item"/"tabletop.json",table_model)
     items["doudizhu:tabletop"]={"material":"paper","data":{"item_name":"<!i><green>青玉牌桌"},"model":{"type":"minecraft:model","path":"doudizhu:item/tabletop"}}
-    (PACK/"configuration"/"items.yml").write_text(yaml.safe_dump({"items":items},allow_unicode=True,sort_keys=False),encoding="utf-8")
-    (PACK/"pack.yml").write_text(yaml.safe_dump({"author":"Doudizhu original assets","namespace":"doudizhu","description":"原创斗地主两套牌面、按钮、牌桌与中文合成语音","version":"1.0.0"},allow_unicode=True,sort_keys=False),encoding="utf-8")
-    if args.visuals_only:
-        voices=json.loads((PACK/"metadata.json").read_text(encoding="utf-8"))["voices"]
-    else:
-        voices=voice_assets()
+    (PACK/"configuration"/"doudizhu.yml").write_text(yaml.safe_dump({"items":items},allow_unicode=True,sort_keys=False),encoding="utf-8")
+    # The shared pack.yml is maintained with the combined pack, not by either card generator.
+    existing_metadata=json.loads((PACK/"metadata"/"doudizhu.json").read_text(encoding="utf-8"))
+    voices=existing_metadata["voices"]
+    if not args.visuals_only:
         music_assets()
-    save_json(PACK/"metadata.json",{"item_ids":list(items),"skins":list(SKINS),"voices":voices,
-        "card_size_pixels":[32,48],"gui_size_pixels":[16,16],"button_size_pixels":[16,16],"tabletop_size_pixels":[64,64],
-        "gui_model":{"selection":"minecraft:select / minecraft:display_context = gui","model":"minecraft:item/generated","texture_suffix":"_gui","additional_item_ids":False},
+    save_json(PACK/"metadata"/"doudizhu.json",{"item_ids":list(items),"skins":list(SKINS),"voices":voices,"voice_source":existing_metadata["voice_source"],
+        "card_size_pixels":[32,48],"button_size_pixels":[16,16],"tabletop_size_pixels":[64,64],
         "corner_geometry":{"rank_and_suit_rightmost_pixel":11,"visible_width_fraction":.48,"ten_rank_rightmost_pixel":11},
         "card_geometry":{"front":"north / local -Z","width_blocks":.625,"height_blocks":.9375,"thickness_blocks":.00375,"fixed_transform":"identity"},
         "button_geometry":{"width_blocks":1,"height_blocks":1,"thickness_blocks":.00375,"fixed_transform":"identity"},
         "tabletop_geometry":{"width_blocks":2,"depth_blocks":2,"thickness_blocks":.0625}})
     preview(images)
     if args.visuals_only:
-        print(f"Generated {len(items)} CE visual items with separate 16px GUI models; existing audio and music preserved.")
+        print(f"Generated {len(items)} CE visual items; existing audio and music preserved.")
     else:
-        print(f"Generated {len(items)} CE items, {len(voices)} Chinese voice files and original melody.")
+        print(f"Generated {len(items)} CE items and original melody; {len(voices)} imported voice events preserved.")
 
 
 if __name__ == "__main__":

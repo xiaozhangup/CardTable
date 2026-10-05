@@ -22,6 +22,9 @@ object TableLayout {
     const val HAND_HEIGHT = 0.80
     const val HAND_LIFT = 0.08
     const val HAND_SPAN = 1.70
+    const val PUBLIC_HAND_DISTANCE = 0.75
+    const val PUBLIC_HAND_HEIGHT = 0.84
+    const val HAND_STATUS_HEIGHT = 1.10
     const val TABLE_HEIGHT = 0.66
     const val SEAT_HEIGHT = 0.60
 
@@ -42,6 +45,11 @@ object TableLayout {
             pitch = 12f
         }
     }
+
+    /** Public status sits over the shared card back. */
+    fun handStatusLocation(table: TableConfig, seat: Int, count: Int): Location =
+        table.center.clone().add(radial(table, seat, count).multiply(radius(count) - PUBLIC_HAND_DISTANCE))
+            .add(0.0, HAND_STATUS_HEIGHT, 0.0)
 
     /** Card fronts are local -Z; positive X tilt turns the face towards the seated eye. */
     fun facing(outward: Vector, tilt: Float = CARD_TILT): Quaternionf =

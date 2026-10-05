@@ -1,38 +1,42 @@
 package me.xiaozhangup.cardtable.table
 
 import me.xiaozhangup.cardtable.CardTablePlugin
+import me.xiaozhangup.cardtable.util.ext.warning
+import me.xiaozhangup.cardtable.util.ext.getDataFolder
+import me.xiaozhangup.cardtable.util.requireInput
+import me.xiaozhangup.crab.configuration.Configuration
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.configuration.file.YamlConfiguration
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 class TableStorage(private val plugin: CardTablePlugin) {
-    private val file = plugin.dataFolder.resolve("tables.yml")
-    private var yaml = YamlConfiguration.loadConfiguration(file)
+    private val file = getDataFolder().resolve("tables.yml")
+    private var yaml = Configuration.empty(concurrent = false)
 
     fun load(): List<TableConfig> {
-        yaml = YamlConfiguration.loadConfiguration(file)
+        yaml = if (file.exists()) Configuration.loadFromFile(file, concurrent = false) else Configuration.empty(concurrent = false)
         return yaml.getConfigurationSection("tables")?.getKeys(false)?.mapNotNull { id ->
-            val section = yaml.getConfigurationSection("tables.$id")!!
             try {
                 validateId(id)
-                val world = Bukkit.getWorld(section.getString("world")!!)
-                    ?: throw IllegalArgumentException("世界尚未加载")
+                val section = requireNotNull(yaml.getConfigurationSection("tables.$id")) { "Table configuration must be a section." }
+                val worldName = requireNotNull(section.getString("world")) { "Table world is missing." }
+                val world = Bukkit.getWorld(worldName)
+                    ?: throw IllegalArgumentException("World '$worldName' is not loaded.")
                 val bet = section.getDouble("bet")
-                require(bet.isFinite() && bet in 0.0..1_000_000.0) { "底注必须在 0..1000000 之间" }
+                require(bet.isFinite() && bet in 0.0..1_000_000.0) { "Base bet must be finite and between 0 and 1000000." }
                 val seconds = section.getInt("turn-seconds", plugin.settings.turnSeconds)
-                require(seconds in 5..300) { "回合时间必须在5..300秒之间" }
+                require(seconds in 5..300) { "Turn duration must be between 5 and 300 seconds." }
                 val skin = section.getString("skin", plugin.settings.defaultSkin)!!
-                require(skin in plugin.settings.skins) { "未知牌面 $skin" }
+                require(skin in plugin.settings.skins) { "Unknown card skin '$skin'." }
                 val options = section.getConfigurationSection("options")?.getKeys(false)
                     ?.associateWith { section.getString("options.$it")!! }.orEmpty()
                 val coordinates = listOf(section.getDouble("x"), section.getDouble("y"), section.getDouble("z"))
-                require(coordinates.all { it.isFinite() } && kotlin.math.abs(coordinates[0]) <= 29_999_980 && kotlin.math.abs(coordinates[2]) <= 29_999_980) { "坐标无效" }
+                require(coordinates.all { it.isFinite() } && kotlin.math.abs(coordinates[0]) <= 29_999_980 && kotlin.math.abs(coordinates[2]) <= 29_999_980) { "Table coordinates are invalid." }
                 TableConfig(id, Location(world, coordinates[0], coordinates[1], coordinates[2], section.getDouble("yaw").toFloat(), 0f),
                     bet, skin, seconds, section.getString("game", "doudizhu")!!, options)
             } catch (error: IllegalArgumentException) {
-                plugin.logger.warning("牌桌 $id 未加载：${error.message}，原配置已保留。")
+                warning("Failed to load table '$id'; its configuration has been preserved.", error.stackTraceToString())
                 null
             }
         }.orEmpty()
@@ -52,11 +56,15 @@ class TableStorage(private val plugin: CardTablePlugin) {
 
     private fun save() {
         val staging = file.resolveSibling("tables.yml.tmp")
-        yaml.save(staging)
+        yaml.saveToFile(staging)
         Files.move(staging.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE)
     }
 
     companion object {
-        fun validateId(id: String) = require(id.matches(Regex("[a-z0-9_-]{1,32}"))) { "牌桌名只能包含小写字母、数字、下划线和连字符，最多32字。" }
+        private val ID_PATTERN = Regex("[a-z0-9_-]{1,32}")
+
+        fun validateId(id: String) = requireInput(id.matches(ID_PATTERN), "Table IDs must contain 1 to 32 lowercase letters, digits, underscores or hyphens.") {
+            "牌桌名只能包含小写字母, 数字, 下划线和连字符, 最多32字"
+        }
     }
 }

@@ -1,17 +1,18 @@
 package me.xiaozhangup.cardtable.ui
 
 import me.xiaozhangup.cardtable.CardTablePlugin
+import me.xiaozhangup.cardtable.util.ext.getDataFolder
+import me.xiaozhangup.crab.configuration.Configuration
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import java.util.UUID
 import kotlin.math.pow
 
 class TableAudio(private val plugin: CardTablePlugin) {
     private data class Note(val tick: Int, val sound: Sound, val pitch: Float, val volume: Float)
-    private val notes = YamlConfiguration.loadConfiguration(plugin.dataFolder.resolve("music.yml"))
+    private val notes = Configuration.loadFromFile(getDataFolder().resolve("music.yml"), concurrent = false)
     private val length = notes.getInt("length-ticks")
     private val events = notes.getMapList("events").map { row ->
         Note((row["tick"] as Number).toInt(), if (row["instrument"] == "bass") Sound.BLOCK_NOTE_BLOCK_BASS else Sound.BLOCK_NOTE_BLOCK_HARP,
@@ -20,7 +21,7 @@ class TableAudio(private val plugin: CardTablePlugin) {
     private val muted = mutableSetOf<UUID>()
     private var tick = 0
 
-    init { require(length > 0 && events.keys.all { it in 0 until length }) { "music.yml 的长度或音符位置无效。" } }
+    init { require(length > 0 && events.keys.all { it in 0 until length }) { "Invalid song length or note position in music.yml." } }
 
     fun voice(tableId: String, key: String) {
         if (!plugin.settings.voice) return
@@ -44,7 +45,8 @@ class TableAudio(private val plugin: CardTablePlugin) {
 
     fun toggle(player: Player) {
         if (!muted.add(player.uniqueId)) muted.remove(player.uniqueId)
-        plugin.tell(player, if (player.uniqueId in muted) "本次在线期间已关闭牌桌音乐。" else "已开启牌桌音乐。")
+        plugin.tell(player, if (player.uniqueId in muted) "本次在线期间已关闭牌桌音乐" else "已开启牌桌音乐")
     }
     fun forget(playerId: UUID) { muted.remove(playerId) }
+    fun isMuted(playerId: UUID): Boolean = playerId in muted
 }

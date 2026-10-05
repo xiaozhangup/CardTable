@@ -1,0 +1,43 @@
+items:
+  cardtable:table_6:
+    material: paper
+    data:
+      item_name: <!i><white>标准牌桌
+    model:
+      type: minecraft:model
+      path: cardtable:item/furniture/table_6
+  cardtable:table_7:
+    material: paper
+    data:
+      item_name: <!i><white>7人牌桌
+    model:
+      type: minecraft:model
+      path: cardtable:item/furniture/table_7
+  cardtable:table_8:
+    material: paper
+    data:
+      item_name: <!i><white>8人牌桌
+    model:
+      type: minecraft:model
+      path: cardtable:item/furniture/table_8
+  cardtable:table_9:
+    material: paper
+    data:
+      item_name: <!i><white>9人牌桌
+    model:
+      type: minecraft:model
+      path: cardtable:item/furniture/table_9
+  cardtable:table_10:
+    material: paper
+    data:
+      item_name: <!i><white>10人牌桌
+    model:
+      type: minecraft:model
+      path: cardtable:item/furniture/table_10
+  cardtable:stool:
+    material: paper
+    data:
+      item_name: <!i><white>无靠背凳
+    model:
+      type: minecraft:model
+      path: cardtable:item/furniture/stool

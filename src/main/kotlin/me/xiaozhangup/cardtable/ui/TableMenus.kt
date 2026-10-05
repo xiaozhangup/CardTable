@@ -1,8 +1,12 @@
 package me.xiaozhangup.cardtable.ui
 
+import io.papermc.paper.datacomponent.DataComponentTypes
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import me.xiaozhangup.cardtable.CardTablePlugin
 import me.xiaozhangup.cardtable.api.GameControl
 import me.xiaozhangup.cardtable.api.GameSession
+import me.xiaozhangup.cardtable.api.PlayerView
+import me.xiaozhangup.cardtable.util.ext.submitTask
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -14,144 +18,181 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
+import org.bukkit.inventory.ItemStack
 import java.util.Locale
 import java.util.UUID
 
 /** Containers provide settings only; play actions belong to the world table. */
 class TableMenus(private val plugin: CardTablePlugin) : Listener {
-    private class Menu(val tableId: String?, val viewer: UUID, var page: Int = 0) : InventoryHolder {
+    private class MenuHolder(
+        private val title: Component,
+        val tableId: String?,
+        val viewer: UUID,
+        var page: Int = 0,
+    ) : InventoryHolder {
+        private lateinit var layout: CharArray
         lateinit var contents: Inventory
+            private set
         val actions = mutableMapOf<Int, GameControl>()
+
+        fun map(vararg rows: String) {
+            layout = rows.joinToString("").toCharArray()
+            if (!::contents.isInitialized) contents = Bukkit.createInventory(this, layout.size, title)
+        }
+
+        fun getSlots(key: Char): List<Int> = layout.indices.filter { layout[it] == key }
+
+        fun set(key: Char, item: ItemStack, control: GameControl? = null) {
+            getSlots(key).forEach { slot -> set(slot, item, control) }
+        }
+
+        fun set(slot: Int, item: ItemStack, control: GameControl? = null) {
+            contents.setItem(slot, item)
+            if (control == null) actions.remove(slot) else actions[slot] = control
+        }
+
         override fun getInventory(): Inventory = contents
     }
     private val items get() = plugin.items
 
     fun open(player: Player, session: GameSession) {
-        val menu = Menu(session.table.id, player.uniqueId)
-        menu.contents = Bukkit.createInventory(menu, 27, Component.text("牌桌设置  ${session.table.id}", NamedTextColor.DARK_GRAY))
+        val menu = MenuHolder(Component.text("牌桌设置  ${session.table.id}", NamedTextColor.DARK_GRAY), session.table.id, player.uniqueId)
         render(menu, session)
         player.openInventory(menu.contents)
     }
 
     fun lobby(player: Player, page: Int = 0) {
-        val menu = Menu(null, player.uniqueId, page)
-        menu.contents = Bukkit.createInventory(menu, 27, Component.text("牌桌设置列表", NamedTextColor.DARK_GRAY))
-        renderLobby(menu)
+        val rooms = plugin.tables.rooms.values.toList()
+        val entries = "TTTTTTTTT"
+        val lastPage = (rooms.size - 1).coerceAtLeast(0) / entries.length
+        val currentPage = page.coerceIn(0, lastPage)
+        val title = if (lastPage == 0) "牌桌列表" else "牌桌列表 ${currentPage + 1}/${lastPage + 1}"
+        val menu = MenuHolder(Component.text(title, NamedTextColor.DARK_GRAY), null, player.uniqueId, currentPage)
+        val rows = if (lastPage == 0) arrayOf("========X", entries)
+            else arrayOf("========X", entries, "=======<>")
+        menu.map(*rows)
+        renderLobby(menu, rooms, lastPage)
         player.openInventory(menu.contents)
     }
 
-    private fun renderLobby(menu: Menu) {
+    private fun renderLobby(menu: MenuHolder, rooms: List<GameSession>, lastPage: Int) {
         frame(menu)
-        val rooms = plugin.tables.rooms.values.toList()
-        val lastPage = ((rooms.size - 1).coerceAtLeast(0) / 9)
-        menu.page = menu.page.coerceIn(0, lastPage)
-        info(menu, 0, "牌桌设置列表", Material.MAP, listOf(
-            items.parameter("牌桌", "${rooms.size} 张"),
-            items.description("选择牌桌后查看桌况与调整个人设置"),
-            items.description("请在世界牌桌空位处入座")
-        ))
-        plugin.tables.tableOf(menu.viewer)?.let { room ->
-            button(menu, 8, GameControl("settings", "返回当前桌设置", "", room.table.id,
-                listOf("当前牌桌: ${room.table.id}")))
-        } ?: button(menu, 8, GameControl("close", "返回世界", ""))
-        rooms.drop(menu.page * 9).take(9).forEachIndexed { index, room ->
-            val view = room.view(null)
-            menu.contents.setItem(9 + index, items.icon("doudizhu:table", room.table.id, listOf(
-                items.parameter("玩法", plugin.tables.provider(room.table.game)!!.displayName),
-                items.parameter("人数", "${room.participants.size}/${room.seatCount}"),
-                items.parameter("状态", view.status), items.parameter("底注", bet(room.table.bet)),
-                items.parameter("本桌牌面", skinName(room.table.skin)), items.description(""),
-                items.hint("单击打开本桌设置")
-            ), Material.OAK_SLAB))
-            menu.actions[9 + index] = GameControl("settings", "", "", room.table.id)
+        val slots = menu.getSlots('T')
+        button(menu, 'X', GameControl("close", "关闭菜单", ""))
+        rooms.drop(menu.page * slots.size).take(slots.size).forEachIndexed { index, room ->
+            menu.set(slots[index], items.menuIcon(Material.OAK_SLAB, room.table.id, buildList {
+                add(items.parameter("玩法", plugin.tables.provider(room.table.game)!!.displayName))
+                add(items.parameter("人数", "${room.participants.size}/${room.seatCount}"))
+                add(items.parameter("状态", if (room.active) "对局中" else "等待准备"))
+                if (room.table.bet > 0) add(items.parameter("底注", bet(room.table.bet)))
+                add(items.description(""))
+                add(items.hint("单击打开设置"))
+            }), GameControl("settings", "", "", room.table.id))
         }
-        if (rooms.isEmpty()) info(menu, 13, "暂无牌桌", Material.PAPER, listOf(items.description("请联系管理员设置牌桌")))
-        info(menu, 18, "设置列表页码", Material.PAPER, listOf(items.parameter("当前", "${menu.page + 1}/${lastPage + 1}")))
-        button(menu, 22, GameControl("close", "返回世界", "", description = listOf("关闭设置界面，保留当前座位")))
-        pageButton(menu, 25, "上一页", menu.page - 1, menu.page > 0)
-        pageButton(menu, 26, "下一页", menu.page + 1, menu.page < lastPage)
+        if (rooms.isEmpty()) menu.set(slots[slots.size / 2], items.menuIcon(Material.PAPER, "暂无牌桌",
+            listOf(items.description("请联系管理员设置牌桌"))))
+        if (lastPage > 0) {
+            pageButton(menu, '<', "上一页", menu.page - 1, menu.page > 0)
+            pageButton(menu, '>', "下一页", menu.page + 1, menu.page < lastPage)
+        }
     }
 
     fun refresh(session: GameSession) {
         Bukkit.getOnlinePlayers().forEach { player ->
-            val menu = player.openInventory.topInventory.holder as? Menu ?: return@forEach
+            val menu = player.openInventory.topInventory.holder as? MenuHolder ?: return@forEach
             if (menu.tableId == session.table.id) render(menu, session)
         }
     }
 
-    private fun render(menu: Menu, room: GameSession) {
-        frame(menu)
+    private fun render(menu: MenuHolder, room: GameSession) {
         val view = room.view(null)
-        val own = room.participants.any { it.id == menu.viewer }
-        val skin = plugin.skin(menu.viewer, room.table.skin)
-        info(menu, 0, "本桌情况", Material.OAK_SLAB, buildList {
-            add(items.parameter("牌桌", room.table.id))
-            add(items.parameter("玩法", plugin.tables.provider(room.table.game)!!.displayName))
-            add(items.parameter("底注", bet(room.table.bet)))
-            add(items.parameter("状态", view.status))
-            if (view.remainingSeconds > 0) add(items.parameter("剩余", "${view.remainingSeconds} 秒"))
-            add(items.description(if (own) "你已入座这张牌桌" else "请到世界牌桌的空位处入座"))
-        })
-        info(menu, 4, "本桌玩家", Material.PLAYER_HEAD, view.players.map { player ->
-            items.parameter(player.participant.name, "${player.role}  ${player.count} 张  ${
-                if (player.current) "正在操作" else if (room.active) "等待回合" else if (player.ready) "已准备" else "未准备"}")
-        }.ifEmpty { listOf(items.description("暂无玩家")) })
-        button(menu, 8, GameControl("lobby", "返回设置列表", ""))
-
-        button(menu, 10, GameControl("skin", "切换个人牌面", "doudizhu:skin", description = listOf("当前牌面: ${skinName(skin)}", "为你的手牌选择显示样式")))
-        button(menu, 12, GameControl("music", "牌桌音乐", "doudizhu:music", description = listOf("切换你当前在线期间的牌桌音乐")))
-        if (room.supportsBots && own) {
-            if (room.active) info(menu, 14, "人机席位", Material.GRAY_DYE, listOf(items.description("本局结束后可调整人机席位")))
-            else {
-                if (room.participants.size < room.seatCount) {
-                    if (room.table.bet == 0.0) button(menu, 14, GameControl("bot_fill", "补齐人机", "", description = listOf("原版人偶入座，自动准备", "人机只参与免费对局")))
-                    else info(menu, 14, "本桌无法添加人机", Material.GRAY_DYE, listOf(items.description("人机只支持底注为 0 的免费桌")))
-                }
-                if (room.participants.any { it.bot }) button(menu, 16, GameControl("bot_clear", "移除人机", "", description = listOf("移除本桌所有人机")))
-            }
+        val players = view.players.sortedBy { it.participant.seat }
+        val entries = "TTTTTTTTT"
+        val lastPage = (players.size - 1).coerceAtLeast(0) / entries.length
+        menu.page = menu.page.coerceIn(0, lastPage)
+        menu.map(
+            "=========",
+            entries,
+            if (lastPage == 0) "SMF======" else "SMF====<>",
+        )
+        frame(menu)
+        val slots = menu.getSlots('T')
+        players.drop(menu.page * slots.size).take(slots.size).forEachIndexed { index, player ->
+            menu.set(slots[index], playerHead(room.table.id, player, room.active))
         }
-        info(menu, 18, "世界牌桌操作", Material.BOOK, listOf(
-            items.description("选牌与出牌均在世界牌桌操作"),
-            items.description("使用桌面全息按钮完成回合操作")
-        ))
-        button(menu, 22, GameControl("close", "返回世界牌桌", "", description = listOf("关闭设置界面，保留当前座位")))
+        val skin = plugin.skin(menu.viewer, room.table.skin)
+        if (plugin.settings.skins.size > 1) {
+            button(menu, 'S', GameControl("skin", "牌面", "", description = listOf("当前: ${skinName(skin)}")))
+        }
+        if (plugin.settings.music) {
+            button(menu, 'M', GameControl("music", "音乐", "", description = listOf(
+                "当前: ${if (plugin.audio.isMuted(menu.viewer)) "关闭" else "开启"}",
+            )))
+        }
+        val own = room.participants.any { it.id == menu.viewer }
+        val emptySeats = room.seatCount - room.participants.size
+        if (room.supportsBots && own && !room.active && room.table.bet == 0.0
+            && emptySeats > 0 && plugin.botAI.available && plugin.botNames.canPick(room.participants, emptySeats)) {
+            button(menu, 'F', GameControl("bot_fill", "补齐机器人", "", description = listOf("原版人偶入座, 自动准备", "机器人只参与免费对局")))
+        }
+        if (lastPage > 0) {
+            pageButton(menu, '<', "上一页", menu.page - 1, menu.page > 0)
+            pageButton(menu, '>', "下一页", menu.page + 1, menu.page < lastPage)
+        }
     }
 
-    private fun frame(menu: Menu) {
+    private fun playerHead(tableId: String, view: PlayerView, active: Boolean): ItemStack {
+        val participant = view.participant
+        val lore = buildList {
+            add(items.parameter("状态", when {
+                view.current -> "正在操作"
+                active -> "等待回合"
+                view.ready -> "准备就绪"
+                else -> "未准备"
+            }))
+            if (active) {
+                if (view.role !in setOf("玩家", "机器人")) add(items.parameter("身份", if (view.role == "UNO") "UNO!" else view.role))
+                add(items.parameter("手牌", "${view.count} 张"))
+            }
+            add(items.description(if (participant.bot) "机器人" else "玩家")
+                .color(if (participant.bot) NamedTextColor.GOLD else NamedTextColor.YELLOW))
+        }
+        val profile = if (participant.bot) plugin.renderer.botProfile(tableId, participant.id)
+            else Bukkit.getPlayer(participant.id)?.let { ResolvableProfile.resolvableProfile(it.playerProfile) }
+        return items.menuIcon(Material.PLAYER_HEAD, participant.name, lore).apply {
+            profile?.let { setData(DataComponentTypes.PROFILE, it) }
+        }
+    }
+
+    private fun frame(menu: MenuHolder) {
         menu.contents.clear()
         menu.actions.clear()
-        (0..8).plus(18..26).forEach { menu.contents.setItem(it, items.decoration(Material.BLACK_STAINED_GLASS_PANE)) }
-        (9..17).forEach { menu.contents.setItem(it, items.decoration(Material.GRAY_STAINED_GLASS_PANE)) }
+        val background = items.decoration(Material.BLACK_STAINED_GLASS_PANE)
+        "=SMF<>".forEach { key -> menu.set(key, background) }
     }
 
-    private fun info(menu: Menu, slot: Int, title: String, material: Material, lore: List<Component>) {
-        menu.contents.setItem(slot, items.icon("", title, lore, material))
+    private fun pageButton(menu: MenuHolder, key: Char, title: String, page: Int, enabled: Boolean) {
+        if (enabled) button(menu, key, GameControl("page", title, "", page.toString()))
     }
 
-    private fun pageButton(menu: Menu, slot: Int, title: String, page: Int, enabled: Boolean) {
-        if (enabled) button(menu, slot, GameControl("page", title, "", page.toString()))
-        else info(menu, slot, if (title.startsWith("上一")) "没有上一页" else "没有下一页", Material.FEATHER,
-            listOf(items.description(if (title.startsWith("上一")) "已到第一页" else "已到最后一页")))
-    }
-
-    private fun button(menu: Menu, slot: Int, control: GameControl) {
+    private fun button(menu: MenuHolder, key: Char, control: GameControl) {
         val material = when (control.action) {
             "close" -> Material.BARRIER
-            "bot_clear" -> Material.ORANGE_DYE
             "bot_fill" -> Material.ARMOR_STAND
-            "lobby", "settings" -> Material.CLOCK
             "page" -> Material.ARROW
             "skin" -> Material.ITEM_FRAME
-            "music" -> Material.NOTE_BLOCK
+            "music" -> Material.MUSIC_DISC_CAT
             else -> Material.PAPER
         }
         val lore = control.description.map { line ->
             val separator = line.indexOf(": ")
             if (separator > 0) items.parameter(line.substring(0, separator), line.substring(separator + 2)) else items.description(line)
-        } + listOf(items.description(""), items.hint(if (control.action == "music") "单击切换音乐" else "单击${control.title}"))
-        menu.contents.setItem(slot, items.icon(control.icon, control.title, lore, material,
-            if (control.action == "bot_clear") NamedTextColor.RED else NamedTextColor.WHITE))
-        menu.actions[slot] = control
+        } + listOf(items.description(""), items.hint(when (control.action) {
+            "skin" -> "单击切换牌面"
+            "music" -> "单击切换音乐"
+            else -> "单击${control.title}"
+        }))
+        menu.set(key, items.menuIcon(material, control.title, lore), control)
     }
 
     private fun skinName(skin: String): String = when (skin) { "classic" -> "经典"; "jade" -> "青玉"; else -> skin }
@@ -159,17 +200,19 @@ class TableMenus(private val plugin: CardTablePlugin) : Listener {
 
     @EventHandler
     fun click(event: InventoryClickEvent) {
-        val menu = event.view.topInventory.holder as? Menu ?: return
+        val menu = event.view.topInventory.holder as? MenuHolder ?: return
         event.isCancelled = true
         val player = event.whoClicked as Player
         val control = menu.actions[event.rawSlot] ?: return
-        plugin.crab.submitTask(delay = 1) {
+        submitTask(delay = 1) {
             if (!player.isOnline || player.openInventory.topInventory !== menu.contents) return@submitTask
             plugin.attempt(player) {
                 when (control.action) {
                     "settings" -> open(player, plugin.tables.room(control.argument!!))
-                    "page" -> lobby(player, control.argument!!.toInt())
-                    "lobby" -> lobby(player)
+                    "page" -> if (menu.tableId == null) lobby(player, control.argument!!.toInt()) else {
+                        menu.page = control.argument!!.toInt()
+                        render(menu, plugin.tables.room(menu.tableId))
+                    }
                     "skin" -> {
                         val room = plugin.tables.room(menu.tableId!!)
                         val choices = plugin.settings.skins.keys.toList()
@@ -177,16 +220,18 @@ class TableMenus(private val plugin: CardTablePlugin) : Listener {
                         plugin.setSkin(player, choices[(choices.indexOf(current) + 1) % choices.size])
                         render(menu, room)
                     }
-                    "music" -> plugin.audio.toggle(player)
+                    "music" -> {
+                        plugin.audio.toggle(player)
+                        render(menu, plugin.tables.room(menu.tableId!!))
+                    }
                     "close" -> player.closeInventory()
                     "bot_fill" -> plugin.tables.bots(player, "fill")
-                    "bot_clear" -> plugin.tables.bots(player, "clear")
                 }
             }
         }
     }
 
     @EventHandler
-    fun drag(event: InventoryDragEvent) { if (event.view.topInventory.holder is Menu) event.isCancelled = true }
-    fun close(player: Player) { if (player.openInventory.topInventory.holder is Menu) player.closeInventory() }
+    fun drag(event: InventoryDragEvent) { if (event.view.topInventory.holder is MenuHolder) event.isCancelled = true }
+    fun close(player: Player) { if (player.openInventory.topInventory.holder is MenuHolder) player.closeInventory() }
 }

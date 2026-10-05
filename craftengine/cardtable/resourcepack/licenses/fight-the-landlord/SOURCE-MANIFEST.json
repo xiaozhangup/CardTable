@@ -1,0 +1,1106 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/palemoky/fight-the-landlord",
+  "commit": "6a2b07bd71a21e0c564277a235846e7f3cf589b1",
+  "raw_base_url": "https://raw.githubusercontent.com/palemoky/fight-the-landlord/6a2b07bd71a21e0c564277a235846e7f3cf589b1/",
+  "upstream_license": {
+    "path": "LICENSE",
+    "sha256": "f817886ee6bb65ed3098a7987b1e9781653d15c71f85589ce0d2af663c66d373",
+    "repository_license": "GPL-3.0",
+    "local_file": "licenses/fight-the-landlord/LICENSE.txt"
+  },
+  "provenance": "Audio was imported from the pinned upstream repository. The repository includes GPL-3.0; original audio authorship and a separate authorization for these recordings have not been confirmed. Semantic subtitles follow upstream sound mappings and original Chinese filenames, not a verified spoken transcript.",
+  "source_directory": "sources/fight-the-landlord",
+  "conversion": {
+    "sample_rate": 44100,
+    "channels": 1,
+    "codec": "libvorbis",
+    "quality": 5,
+    "peak_target_dbfs": -2.0,
+    "maximum_gain_db": 6.0,
+    "processing": "Downmix to mono, apply one constant gain toward the target peak (boost limited to 6 dB), resample to 44.1 kHz, and encode Vorbis. No denoising, equalization, or dynamic compression."
+  },
+  "clips": [
+    {
+      "event": "female.single_3",
+      "file": "female/single_3.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_3.mp3",
+      "subtitle_zh_cn": "3",
+      "subtitle_en_us": "3",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/3.mp3",
+      "sha256": "2690cee3da22b7cc8a0488c644b9956573f1dce4bbc4de0bc2ee8333b5b92cdc",
+      "bytes": 4302
+    },
+    {
+      "event": "female.single_4",
+      "file": "female/single_4.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_4.mp3",
+      "subtitle_zh_cn": "4",
+      "subtitle_en_us": "4",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/4.mp3",
+      "sha256": "cd15ae739c4ee562f4c157bb8d83b4b9f1b4cd251db434d62b52a50f24f1f0ce",
+      "bytes": 4302
+    },
+    {
+      "event": "female.single_5",
+      "file": "female/single_5.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_5.mp3",
+      "subtitle_zh_cn": "5",
+      "subtitle_en_us": "5",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/5.mp3",
+      "sha256": "371ec1cad8ac8421631fc328dd39922cf463777d473766067a72efeb430d4079",
+      "bytes": 4772
+    },
+    {
+      "event": "female.single_6",
+      "file": "female/single_6.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_6.mp3",
+      "subtitle_zh_cn": "6",
+      "subtitle_en_us": "6",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/6.mp3",
+      "sha256": "45751cda81c2ee971fd83eab8e318b0b2ba40965d9e2cfb658f2ffdd4c5b7a39",
+      "bytes": 3205
+    },
+    {
+      "event": "female.single_7",
+      "file": "female/single_7.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_7.mp3",
+      "subtitle_zh_cn": "7",
+      "subtitle_en_us": "7",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/7.mp3",
+      "sha256": "4a23f144410d9340582d4f7902e83189cb8569c6c5697e9d4d188328d9f1b535",
+      "bytes": 4145
+    },
+    {
+      "event": "female.single_8",
+      "file": "female/single_8.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_8.mp3",
+      "subtitle_zh_cn": "8",
+      "subtitle_en_us": "8",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/8.mp3",
+      "sha256": "28ff0f96d823838e997a81fca9e51e6f31b26baf0bcbe841b429b94154e734a0",
+      "bytes": 3361
+    },
+    {
+      "event": "female.single_9",
+      "file": "female/single_9.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_9.mp3",
+      "subtitle_zh_cn": "9",
+      "subtitle_en_us": "9",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/9.mp3",
+      "sha256": "90a0ba9b92f5c7734c9b4f6116de3781cb352a1a7db16176f8d64582c28a0cdf",
+      "bytes": 4929
+    },
+    {
+      "event": "female.single_10",
+      "file": "female/single_10.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_10.mp3",
+      "subtitle_zh_cn": "10",
+      "subtitle_en_us": "10",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/10.mp3",
+      "sha256": "dfbfc732ab373ca4c0cc46b34ef75db0104601aecf06b8b74f470868e228cb59",
+      "bytes": 4145
+    },
+    {
+      "event": "female.single_11",
+      "file": "female/single_11.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_J.mp3",
+      "subtitle_zh_cn": "J",
+      "subtitle_en_us": "J",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/J.mp3",
+      "sha256": "a69aa444d137a79b26cb5dd13a9a1f8287402815b72615cce878e00f3de524ad",
+      "bytes": 3675
+    },
+    {
+      "event": "female.single_12",
+      "file": "female/single_12.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_Q.mp3",
+      "subtitle_zh_cn": "Q",
+      "subtitle_en_us": "Q",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/Q.mp3",
+      "sha256": "bafa79e35c75b2119cd63f26011ae6bf6684bcd98342012c033855afd8729474",
+      "bytes": 3988
+    },
+    {
+      "event": "female.single_13",
+      "file": "female/single_13.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_K.mp3",
+      "subtitle_zh_cn": "K",
+      "subtitle_en_us": "K",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/K.mp3",
+      "sha256": "beea833f47136bbbd45f9abbf01dd1682c11de724912f7014fe8d6abeeb963bc",
+      "bytes": 3361
+    },
+    {
+      "event": "female.single_14",
+      "file": "female/single_14.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_A.mp3",
+      "subtitle_zh_cn": "A",
+      "subtitle_en_us": "A",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/A.mp3",
+      "sha256": "5cfaee2e07504b1a99fc9e9b882b31f09f6b0428cfaa2251e0bb0bdef27a7e5f",
+      "bytes": 3832
+    },
+    {
+      "event": "female.single_15",
+      "file": "female/single_15.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_2.mp3",
+      "subtitle_zh_cn": "2",
+      "subtitle_en_us": "2",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/2.mp3",
+      "sha256": "083fc8d957fe1a41822e859490cb00477ebfac1bb82ed3fcbc26653eb8f5e119",
+      "bytes": 3832
+    },
+    {
+      "event": "female.single_16",
+      "file": "female/single_16.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_joker_small.mp3",
+      "subtitle_zh_cn": "小王",
+      "subtitle_en_us": "Small joker",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/小王.mp3",
+      "sha256": "f6f308a9e567001bb736393e7da57838f8959a95d5a4c2d060cf9628bf863579",
+      "bytes": 5399
+    },
+    {
+      "event": "female.single_17",
+      "file": "female/single_17.ogg",
+      "path": "internal/sound/gaming/voices/female/single/single_joker_big.mp3",
+      "subtitle_zh_cn": "大王",
+      "subtitle_en_us": "Big joker",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/单牌/大王.mp3",
+      "sha256": "bf208abd6d8adb4b1d6e10b25049644e8338a1f0b5e2e6ffafcc5f73da2caa59",
+      "bytes": 5242
+    },
+    {
+      "event": "female.pair_3",
+      "file": "female/pair_3.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_3.mp3",
+      "subtitle_zh_cn": "对3",
+      "subtitle_en_us": "Pair of 3",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对3.mp3",
+      "sha256": "bf6affac0dd0dcf25dca73748e1495d948abc3b891ef5b7d609b639cc7c6f7e2",
+      "bytes": 4615
+    },
+    {
+      "event": "female.triple_3",
+      "file": "female/triple_3.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_3.mp3",
+      "subtitle_zh_cn": "三张3",
+      "subtitle_en_us": "Three 3",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个3.mp3",
+      "sha256": "41259fad0b45445430467c1d2c66d059a5e4f5e4377e1d2171a4476fb68af19e",
+      "bytes": 6496
+    },
+    {
+      "event": "female.pair_4",
+      "file": "female/pair_4.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_4.mp3",
+      "subtitle_zh_cn": "对4",
+      "subtitle_en_us": "Pair of 4",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对4.mp3",
+      "sha256": "9a360d406e5d163b63def9e3499bb21f0d2cd8d0fdd51252ce99a6c22ff33ad3",
+      "bytes": 5242
+    },
+    {
+      "event": "female.triple_4",
+      "file": "female/triple_4.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_4.mp3",
+      "subtitle_zh_cn": "三张4",
+      "subtitle_en_us": "Three 4",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个4.mp3",
+      "sha256": "b488f1dc90bd6ebe3c4ee650736a50993ebbf6395f8acdcf375f1525dad5d511",
+      "bytes": 6496
+    },
+    {
+      "event": "female.pair_5",
+      "file": "female/pair_5.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_5.mp3",
+      "subtitle_zh_cn": "对5",
+      "subtitle_en_us": "Pair of 5",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对5.mp3",
+      "sha256": "c0ff50ccf9d4d534cd26a2797da6b4073be158e60bb95ff5092b2c1a5d10ba1e",
+      "bytes": 4615
+    },
+    {
+      "event": "female.triple_5",
+      "file": "female/triple_5.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_5.mp3",
+      "subtitle_zh_cn": "三张5",
+      "subtitle_en_us": "Three 5",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个5.mp3",
+      "sha256": "21373fd36ea8233603790fb3c591f721e6fd24b2b60fd7dc9d97e52334f66fb0",
+      "bytes": 6966
+    },
+    {
+      "event": "female.pair_6",
+      "file": "female/pair_6.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_6.mp3",
+      "subtitle_zh_cn": "对6",
+      "subtitle_en_us": "Pair of 6",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对6.mp3",
+      "sha256": "cfc23379bb608fde5715c7e2f2185557bce874fe72c1b04e6e1e7f145df72623",
+      "bytes": 4615
+    },
+    {
+      "event": "female.triple_6",
+      "file": "female/triple_6.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_6.mp3",
+      "subtitle_zh_cn": "三张6",
+      "subtitle_en_us": "Three 6",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个6.mp3",
+      "sha256": "f460aaf54f71687be95065a56ea6dea13614937656732f577ecd101e59aab686",
+      "bytes": 5869
+    },
+    {
+      "event": "female.pair_7",
+      "file": "female/pair_7.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_7.mp3",
+      "subtitle_zh_cn": "对7",
+      "subtitle_en_us": "Pair of 7",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对7.mp3",
+      "sha256": "ea80b6e6ef631b1f55ddb176b3e1bbfbf6f1e44b3e488800f7155d20f99846c9",
+      "bytes": 4459
+    },
+    {
+      "event": "female.triple_7",
+      "file": "female/triple_7.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_7.mp3",
+      "subtitle_zh_cn": "三张7",
+      "subtitle_en_us": "Three 7",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个7.mp3",
+      "sha256": "9f167f0a7afa135ea70e2c000256a4610d8dc869c25d5fd22b8e315ac8fb4be0",
+      "bytes": 6496
+    },
+    {
+      "event": "female.pair_8",
+      "file": "female/pair_8.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_8.mp3",
+      "subtitle_zh_cn": "对8",
+      "subtitle_en_us": "Pair of 8",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对8.mp3",
+      "sha256": "9e4147abea065175389c7efd8841fae298ecaeba17f81d41a2f93f2de9d6775a",
+      "bytes": 4615
+    },
+    {
+      "event": "female.triple_8",
+      "file": "female/triple_8.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_8.mp3",
+      "subtitle_zh_cn": "三张8",
+      "subtitle_en_us": "Three 8",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个8.mp3",
+      "sha256": "32c1b6cde4ca1b122307f9489075ef680b46814c6ad26151698879fa3e363de3",
+      "bytes": 6496
+    },
+    {
+      "event": "female.pair_9",
+      "file": "female/pair_9.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_9.mp3",
+      "subtitle_zh_cn": "对9",
+      "subtitle_en_us": "Pair of 9",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对9.mp3",
+      "sha256": "ad650c0ad17b1a32043a5d46bc929bd0f12de6d916cb1bdc4ec49adf86d6054b",
+      "bytes": 5869
+    },
+    {
+      "event": "female.triple_9",
+      "file": "female/triple_9.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_9.mp3",
+      "subtitle_zh_cn": "三张9",
+      "subtitle_en_us": "Three 9",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个9.mp3",
+      "sha256": "934d9b96a0d15f192e3c664b5704de999c8bc745c4d9c0dffb43711f8d3b746c",
+      "bytes": 6496
+    },
+    {
+      "event": "female.pair_10",
+      "file": "female/pair_10.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_10.mp3",
+      "subtitle_zh_cn": "对10",
+      "subtitle_en_us": "Pair of 10",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对10.mp3",
+      "sha256": "b40156a7bb16b87d26a238be05d2b991579596b6f11ae767b144c24701161756",
+      "bytes": 5242
+    },
+    {
+      "event": "female.triple_10",
+      "file": "female/triple_10.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_10.mp3",
+      "subtitle_zh_cn": "三张10",
+      "subtitle_en_us": "Three 10",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个10.mp3",
+      "sha256": "038c6ee310f871da91258065a5c79596653d81e07ecaf63b00da455d62e0ce76",
+      "bytes": 6653
+    },
+    {
+      "event": "female.pair_11",
+      "file": "female/pair_11.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_J.mp3",
+      "subtitle_zh_cn": "对J",
+      "subtitle_en_us": "Pair of J",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对J.mp3",
+      "sha256": "da20c81cdd264102049f709d4c9cb4d8c5f1339fc2f668bed16581e757126680",
+      "bytes": 4302
+    },
+    {
+      "event": "female.triple_11",
+      "file": "female/triple_11.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_J.mp3",
+      "subtitle_zh_cn": "三张J",
+      "subtitle_en_us": "Three J",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个J.mp3",
+      "sha256": "0c0091b623a5949cba97343a5f3aca05433f8f354d482d0f2aed031a5f7b729c",
+      "bytes": 6339
+    },
+    {
+      "event": "female.pair_12",
+      "file": "female/pair_12.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_Q.mp3",
+      "subtitle_zh_cn": "对Q",
+      "subtitle_en_us": "Pair of Q",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对Q.mp3",
+      "sha256": "b2e4e09428d1f8e889c788fbbd142e67074f6c90196f38f3da74c122597ba539",
+      "bytes": 4302
+    },
+    {
+      "event": "female.triple_12",
+      "file": "female/triple_12.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_Q.mp3",
+      "subtitle_zh_cn": "三张Q",
+      "subtitle_en_us": "Three Q",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个Q.mp3",
+      "sha256": "e6f2f3848f423d5594ba9f355addd46b112c5a137ccbfba463064d10a8c1eca4",
+      "bytes": 6339
+    },
+    {
+      "event": "female.pair_13",
+      "file": "female/pair_13.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_K.mp3",
+      "subtitle_zh_cn": "对K",
+      "subtitle_en_us": "Pair of K",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对K.mp3",
+      "sha256": "672717146d87b6f713a89ad6c47d2eac93dc6f19202b358b0e0662a36830923a",
+      "bytes": 3518
+    },
+    {
+      "event": "female.triple_13",
+      "file": "female/triple_13.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_K.mp3",
+      "subtitle_zh_cn": "三张K",
+      "subtitle_en_us": "Three K",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个K.mp3",
+      "sha256": "30708e6bf5784f5f395097998907a28dd4a39241feda47668e61b64db11b3d41",
+      "bytes": 6026
+    },
+    {
+      "event": "female.pair_14",
+      "file": "female/pair_14.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_A.mp3",
+      "subtitle_zh_cn": "对A",
+      "subtitle_en_us": "Pair of A",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对A.mp3",
+      "sha256": "be7a51bf556e42bbb98315bd614a4cfb29bfd69e008fb596e9ea02623e5dbbde",
+      "bytes": 4459
+    },
+    {
+      "event": "female.triple_14",
+      "file": "female/triple_14.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_A.mp3",
+      "subtitle_zh_cn": "三张A",
+      "subtitle_en_us": "Three A",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个A.mp3",
+      "sha256": "68e560b563d79e4a987090f98f4a4f662f58ad2e211c29e21a43bc461e062c5b",
+      "bytes": 6339
+    },
+    {
+      "event": "female.pair_15",
+      "file": "female/pair_15.ogg",
+      "path": "internal/sound/gaming/voices/female/pair/pair_2.mp3",
+      "subtitle_zh_cn": "对2",
+      "subtitle_en_us": "Pair of 2",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/对子/对2.mp3",
+      "sha256": "f7aa93335d7126cfb9ddd2becceb51fd3b0c2c4df19ed2d621b9c4c369bdd5bf",
+      "bytes": 4615
+    },
+    {
+      "event": "female.triple_15",
+      "file": "female/triple_15.ogg",
+      "path": "internal/sound/gaming/voices/female/trio/trio_2.mp3",
+      "subtitle_zh_cn": "三张2",
+      "subtitle_en_us": "Three 2",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三个/三个2.mp3",
+      "sha256": "9c5dfc6dde788b0d71e799ea61a102d667cd1cdb2d0d67f1122ae44fb12a7623",
+      "bytes": 6183
+    },
+    {
+      "event": "female.triple_single",
+      "file": "female/triple_single.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_trio_single.mp3",
+      "subtitle_zh_cn": "三带一",
+      "subtitle_en_us": "Three with one",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三带一.mp3",
+      "sha256": "0be861c2ec610af9767bbe10260883dccd6b691248d42015d601784d00b0568b",
+      "bytes": 5869
+    },
+    {
+      "event": "female.triple_pair",
+      "file": "female/triple_pair.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_trio_pair.mp3",
+      "subtitle_zh_cn": "三带一对",
+      "subtitle_en_us": "Three with a pair",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/三带一对.mp3",
+      "sha256": "33582d541e0a93c5c0b79164b81659a2c94d8a9501cf127045215c1c2da6e469",
+      "bytes": 7437
+    },
+    {
+      "event": "female.straight",
+      "file": "female/straight.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_straight.mp3",
+      "subtitle_zh_cn": "顺子",
+      "subtitle_en_us": "Straight",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/顺子.mp3",
+      "sha256": "d2bda7cdcd41dd40b0285fa9721ee24f64a2b2bfc2edf4d08c27c11afa10b036",
+      "bytes": 6026
+    },
+    {
+      "event": "female.pair_straight",
+      "file": "female/pair_straight.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_pairstraight.mp3",
+      "subtitle_zh_cn": "连对",
+      "subtitle_en_us": "Consecutive pairs",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/连对.mp3",
+      "sha256": "2dd0a5b0223cd2bf0193d892867d1eff7d8774f7dba5865e16b6eafb282d2a56",
+      "bytes": 4145
+    },
+    {
+      "event": "female.airplane",
+      "file": "female/airplane.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_plane.mp3",
+      "subtitle_zh_cn": "飞机",
+      "subtitle_en_us": "Airplane",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/飞机.mp3",
+      "sha256": "f2217fe3ea37faa732f72f74d9d0ed2afe0bd7b204fa66451be3a24cf5218785",
+      "bytes": 6339
+    },
+    {
+      "event": "female.four_single",
+      "file": "female/four_single.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_four_two.mp3",
+      "subtitle_zh_cn": "四带二",
+      "subtitle_en_us": "Four with two",
+      "upstream_original_path": "internal/sound/sounds/women/四带二.mp3",
+      "sha256": "448d6650af5074fac26b669e99e2068dc92a178eadf12c0e8c74adf924db887c",
+      "bytes": 4615
+    },
+    {
+      "event": "female.four_pair",
+      "file": "female/four_pair.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_four_twopair.mp3",
+      "subtitle_zh_cn": "四带两对",
+      "subtitle_en_us": "Four with two pairs",
+      "upstream_original_path": "internal/sound/sounds/women/四带两对.mp3",
+      "sha256": "64f4e4cc9aff49f138f3b551838feb2834b938041dc15863c395a3f15106408d",
+      "bytes": 8377
+    },
+    {
+      "event": "female.bomb",
+      "file": "female/bomb.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_bomb.mp3",
+      "subtitle_zh_cn": "炸弹",
+      "subtitle_en_us": "Bomb",
+      "upstream_original_path": "internal/sound/sounds/women/炸弹.mp3",
+      "sha256": "a890260a67b0cb8e3805b1579648449bece7e8589224e60d16f972ecb8d77457",
+      "bytes": 3988
+    },
+    {
+      "event": "female.rocket",
+      "file": "female/rocket.ogg",
+      "path": "internal/sound/gaming/voices/female/type/type_rocket.mp3",
+      "subtitle_zh_cn": "王炸",
+      "subtitle_en_us": "Rocket",
+      "upstream_original_path": "internal/sound/sounds/women/牌型/王炸.mp3",
+      "sha256": "3cb855ff7e62e6ef73e042e09aa08735d4305ee67a6c8b044102234de9a34782",
+      "bytes": 5869
+    },
+    {
+      "event": "female.bid_0",
+      "file": "female/bid_0.ogg",
+      "path": "internal/sound/gaming/voices/female/bid/bid_nocall.mp3",
+      "subtitle_zh_cn": "不叫",
+      "subtitle_en_us": "No bid",
+      "upstream_original_path": "internal/sound/sounds/women/不叫（地主）.mp3",
+      "sha256": "e6a6b467ab9537898bd5eb5a73916c7dc16a0c7812e0d57b4f689c3e686167c5",
+      "bytes": 6183
+    },
+    {
+      "event": "female.bid_call",
+      "file": "female/bid_call.ogg",
+      "path": "internal/sound/gaming/voices/female/bid/bid_call.mp3",
+      "subtitle_zh_cn": "叫地主",
+      "subtitle_en_us": "Call landlord",
+      "upstream_original_path": "internal/sound/sounds/women/叫地主.mp3",
+      "sha256": "eb6858efb3f741fd17f952b93c119a0c28cba146f6da7a27a3cbfb12243a4f6e",
+      "bytes": 6183
+    },
+    {
+      "event": "female.pass",
+      "file": "female/pass_buyao.ogg",
+      "path": "internal/sound/gaming/voices/female/pass/pass_buyao.mp3",
+      "subtitle_zh_cn": "不出",
+      "subtitle_en_us": "Pass",
+      "upstream_original_path": "internal/sound/sounds/women/不出牌/不要.mp3",
+      "sha256": "f41b66643d55d1f09ecf2727b14c4447447d87ec115946e2449fdfdb4f21ef33",
+      "bytes": 4772
+    },
+    {
+      "event": "female.pass",
+      "file": "female/pass_guo.ogg",
+      "path": "internal/sound/gaming/voices/female/pass/pass_guo.mp3",
+      "subtitle_zh_cn": "不出",
+      "subtitle_en_us": "Pass",
+      "upstream_original_path": "internal/sound/sounds/women/不出牌/过.mp3",
+      "sha256": "0364a42cc0437c27682429ca1438a1da59376d639faac56882c134ebf49d8597",
+      "bytes": 3048
+    },
+    {
+      "event": "male.single_3",
+      "file": "male/single_3.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_3.mp3",
+      "subtitle_zh_cn": "3",
+      "subtitle_en_us": "3",
+      "upstream_original_path": "internal/sound/sounds/single_3.mp3",
+      "sha256": "eec921445206e705fb7509218ba3b222f135eb06aad0b35be745fa7adf2ec2b6",
+      "bytes": 2735
+    },
+    {
+      "event": "male.single_4",
+      "file": "male/single_4.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_4.mp3",
+      "subtitle_zh_cn": "4",
+      "subtitle_en_us": "4",
+      "upstream_original_path": "internal/sound/sounds/single_4.mp3",
+      "sha256": "7f83994066084383f8680d98bc99d34e461a44a44bf410fa4a40518fc7a86f1d",
+      "bytes": 2421
+    },
+    {
+      "event": "male.single_5",
+      "file": "male/single_5.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_5.mp3",
+      "subtitle_zh_cn": "5",
+      "subtitle_en_us": "5",
+      "upstream_original_path": "internal/sound/sounds/single_5.mp3",
+      "sha256": "7b483a9b3d2e47906028db89bd859e2c15f3b6f086e597fcb147a3e6bb1c1cc5",
+      "bytes": 3518
+    },
+    {
+      "event": "male.single_6",
+      "file": "male/single_6.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_6.mp3",
+      "subtitle_zh_cn": "6",
+      "subtitle_en_us": "6",
+      "upstream_original_path": "internal/sound/sounds/single_6.mp3",
+      "sha256": "edf1332c588cdf548df1790f5b903feaea11cd5f85671aca3894bafb2ed2fc37",
+      "bytes": 3048
+    },
+    {
+      "event": "male.single_7",
+      "file": "male/single_7.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_7.mp3",
+      "subtitle_zh_cn": "7",
+      "subtitle_en_us": "7",
+      "upstream_original_path": "internal/sound/sounds/single_7.mp3",
+      "sha256": "1485bcb2a5746b8a817ec67856858376414d07fc40f21c976c74b11119c746af",
+      "bytes": 3675
+    },
+    {
+      "event": "male.single_8",
+      "file": "male/single_8.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_8.mp3",
+      "subtitle_zh_cn": "8",
+      "subtitle_en_us": "8",
+      "upstream_original_path": "internal/sound/sounds/single_8.mp3",
+      "sha256": "c218b1483619102c981dc5a34c0149b279c40f12bf7ad5d4bbd1c30e0fe0d6fd",
+      "bytes": 2264
+    },
+    {
+      "event": "male.single_9",
+      "file": "male/single_9.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_9.mp3",
+      "subtitle_zh_cn": "9",
+      "subtitle_en_us": "9",
+      "upstream_original_path": "internal/sound/sounds/single_9.mp3",
+      "sha256": "1320ac763af332e9621b0946d95865986f3b91e86d6c0028d2239ee5cc3457e3",
+      "bytes": 3675
+    },
+    {
+      "event": "male.single_10",
+      "file": "male/single_10.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_10.mp3",
+      "subtitle_zh_cn": "10",
+      "subtitle_en_us": "10",
+      "upstream_original_path": "internal/sound/sounds/single_10.mp3",
+      "sha256": "7a9ccb1b82355b838d3a377df148c1e2e1a22a77fe116bbcc1babd0e73f27b13",
+      "bytes": 2578
+    },
+    {
+      "event": "male.single_11",
+      "file": "male/single_11.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_J.mp3",
+      "subtitle_zh_cn": "J",
+      "subtitle_en_us": "J",
+      "upstream_original_path": "internal/sound/sounds/single_J.mp3",
+      "sha256": "a4a8ee2f4975ba1b9e7acbf8fd5573a468a522a72dcbcd2146f06d25bf399dd3",
+      "bytes": 2735
+    },
+    {
+      "event": "male.single_12",
+      "file": "male/single_12.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_Q.mp3",
+      "subtitle_zh_cn": "Q",
+      "subtitle_en_us": "Q",
+      "upstream_original_path": "internal/sound/sounds/single_Q.mp3",
+      "sha256": "29297ebedfdc3853879f408a657ee4e8a1cb53e0b1bd390ec7e4130d76b7c4b8",
+      "bytes": 3832
+    },
+    {
+      "event": "male.single_13",
+      "file": "male/single_13.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_K.mp3",
+      "subtitle_zh_cn": "K",
+      "subtitle_en_us": "K",
+      "upstream_original_path": "internal/sound/sounds/single_K.mp3",
+      "sha256": "f79367d6ea3f35c6bab7e63bcfe6416a9e117b405a6f569f42029eb207fa1bd4",
+      "bytes": 2891
+    },
+    {
+      "event": "male.single_14",
+      "file": "male/single_14.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_A.mp3",
+      "subtitle_zh_cn": "A",
+      "subtitle_en_us": "A",
+      "upstream_original_path": "internal/sound/sounds/single_A.mp3",
+      "sha256": "6c4507aae6efb73819adc03a01d4012adae2d7a59ba9a98ba09cfa1f68e87e32",
+      "bytes": 2735
+    },
+    {
+      "event": "male.single_15",
+      "file": "male/single_15.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_2.mp3",
+      "subtitle_zh_cn": "2",
+      "subtitle_en_us": "2",
+      "upstream_original_path": "internal/sound/sounds/single_2.mp3",
+      "sha256": "18f0c5661a75d6a8802890691f3916aa538b0434da842a52b8924dd581102cae",
+      "bytes": 3205
+    },
+    {
+      "event": "male.single_16",
+      "file": "male/single_16.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_joker_small.mp3",
+      "subtitle_zh_cn": "小王",
+      "subtitle_en_us": "Small joker",
+      "upstream_original_path": "internal/sound/sounds/single_joker_small.mp3",
+      "sha256": "1d51b71187a389d6dcf247621ae217acb26f679ecbee8a5f9f1a39aada772333",
+      "bytes": 4929
+    },
+    {
+      "event": "male.single_17",
+      "file": "male/single_17.ogg",
+      "path": "internal/sound/gaming/voices/male/single/single_joker_big.mp3",
+      "subtitle_zh_cn": "大王",
+      "subtitle_en_us": "Big joker",
+      "upstream_original_path": "internal/sound/sounds/single_joker_big.mp3",
+      "sha256": "b3387e1058acd36009db31abdb865395ae1866e839a03e4ce792da7dcb9cef77",
+      "bytes": 4459
+    },
+    {
+      "event": "male.pair_3",
+      "file": "male/pair_3.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_3.mp3",
+      "subtitle_zh_cn": "对3",
+      "subtitle_en_us": "Pair of 3",
+      "upstream_original_path": "internal/sound/sounds/pair_3.mp3",
+      "sha256": "c65f9a296d7e64e4702a2ba8ba5bc5027098d36f3e9d2122d00e8546139fc927",
+      "bytes": 3048
+    },
+    {
+      "event": "male.triple_3",
+      "file": "male/triple_3.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_3.mp3",
+      "subtitle_zh_cn": "三张3",
+      "subtitle_en_us": "Three 3",
+      "upstream_original_path": "internal/sound/sounds/trio_3.mp3",
+      "sha256": "3e35c89b35a3036967d1d4e645d16cce7ee4a9c905777945ac49fbd7d47389c2",
+      "bytes": 5086
+    },
+    {
+      "event": "male.pair_4",
+      "file": "male/pair_4.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_4.mp3",
+      "subtitle_zh_cn": "对4",
+      "subtitle_en_us": "Pair of 4",
+      "upstream_original_path": "internal/sound/sounds/pair_4.mp3",
+      "sha256": "83826571022dcae3d8290ba9d19db936b94380f78c6427d3f747de8d8e7696a8",
+      "bytes": 4302
+    },
+    {
+      "event": "male.triple_4",
+      "file": "male/triple_4.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_4.mp3",
+      "subtitle_zh_cn": "三张4",
+      "subtitle_en_us": "Three 4",
+      "upstream_original_path": "internal/sound/sounds/trio_4.mp3",
+      "sha256": "483e87b146c24d88775666590364156ebc8f36b8919339bf56722050b44405f7",
+      "bytes": 4772
+    },
+    {
+      "event": "male.pair_5",
+      "file": "male/pair_5.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_5.mp3",
+      "subtitle_zh_cn": "对5",
+      "subtitle_en_us": "Pair of 5",
+      "upstream_original_path": "internal/sound/sounds/pair_5.mp3",
+      "sha256": "e9e03cf6d710876a9b982282d358868cbf4fe642fa9cb9389447aa0052744ad4",
+      "bytes": 4615
+    },
+    {
+      "event": "male.triple_5",
+      "file": "male/triple_5.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_5.mp3",
+      "subtitle_zh_cn": "三张5",
+      "subtitle_en_us": "Three 5",
+      "upstream_original_path": "internal/sound/sounds/trio_5.mp3",
+      "sha256": "a82b4f0e682c2ebd487bf184d5ce04f25e110cc431935f3ddee182d27fdf6623",
+      "bytes": 6183
+    },
+    {
+      "event": "male.pair_6",
+      "file": "male/pair_6.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_6.mp3",
+      "subtitle_zh_cn": "对6",
+      "subtitle_en_us": "Pair of 6",
+      "upstream_original_path": "internal/sound/sounds/pair_6.mp3",
+      "sha256": "5647d0bd10cbab036cc4e0c60f57415df8f0ecc34ebbb985e0043f4daaa0eaaf",
+      "bytes": 3675
+    },
+    {
+      "event": "male.triple_6",
+      "file": "male/triple_6.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_6.mp3",
+      "subtitle_zh_cn": "三张6",
+      "subtitle_en_us": "Three 6",
+      "upstream_original_path": "internal/sound/sounds/trio_6.mp3",
+      "sha256": "bd2faa753c144b3e840f1de1f21248ee47f90acf9c17e83a737406cb18445734",
+      "bytes": 5399
+    },
+    {
+      "event": "male.pair_7",
+      "file": "male/pair_7.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_7.mp3",
+      "subtitle_zh_cn": "对7",
+      "subtitle_en_us": "Pair of 7",
+      "upstream_original_path": "internal/sound/sounds/pair_7.mp3",
+      "sha256": "b59832050559fc0ec460181560038d2bb7eea7cd054b0e9936202889a05a5bde",
+      "bytes": 3361
+    },
+    {
+      "event": "male.triple_7",
+      "file": "male/triple_7.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_7.mp3",
+      "subtitle_zh_cn": "三张7",
+      "subtitle_en_us": "Three 7",
+      "upstream_original_path": "internal/sound/sounds/trio_7.mp3",
+      "sha256": "b412b9bf3a4a2452deba4e78d29546b2fd234bb061d55e365ff4701d95df341d",
+      "bytes": 5869
+    },
+    {
+      "event": "male.pair_8",
+      "file": "male/pair_8.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_8.mp3",
+      "subtitle_zh_cn": "对8",
+      "subtitle_en_us": "Pair of 8",
+      "upstream_original_path": "internal/sound/sounds/pair_8.mp3",
+      "sha256": "69857816b9420083a2314902ec6906adc4eddf778766b88090230fab48aa06bc",
+      "bytes": 3988
+    },
+    {
+      "event": "male.triple_8",
+      "file": "male/triple_8.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_8.mp3",
+      "subtitle_zh_cn": "三张8",
+      "subtitle_en_us": "Three 8",
+      "upstream_original_path": "internal/sound/sounds/trio_8.mp3",
+      "sha256": "1c250bb1d74c6dd75d918bf6daf534432f013f5678858de5ba924f61ef4d9c55",
+      "bytes": 4615
+    },
+    {
+      "event": "male.pair_9",
+      "file": "male/pair_9.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_9.mp3",
+      "subtitle_zh_cn": "对9",
+      "subtitle_en_us": "Pair of 9",
+      "upstream_original_path": "internal/sound/sounds/pair_9.mp3",
+      "sha256": "11241819fc3cd96ba651e03138d5d60f531d91cdeb335430d8f6db4659bbf90c",
+      "bytes": 3205
+    },
+    {
+      "event": "male.triple_9",
+      "file": "male/triple_9.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_9.mp3",
+      "subtitle_zh_cn": "三张9",
+      "subtitle_en_us": "Three 9",
+      "upstream_original_path": "internal/sound/sounds/trio_9.mp3",
+      "sha256": "dd7353ce712331e7d464de73ad37e0e8afd097f5df30748b2dcc3c221fb485ed",
+      "bytes": 6026
+    },
+    {
+      "event": "male.pair_10",
+      "file": "male/pair_10.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_10.mp3",
+      "subtitle_zh_cn": "对10",
+      "subtitle_en_us": "Pair of 10",
+      "upstream_original_path": "internal/sound/sounds/pair_10.mp3",
+      "sha256": "9ce065172dd65ee1ee4fa06960ec1a807774cd8d0846aecc0270823a65f3b669",
+      "bytes": 4772
+    },
+    {
+      "event": "male.triple_10",
+      "file": "male/triple_10.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_10.mp3",
+      "subtitle_zh_cn": "三张10",
+      "subtitle_en_us": "Three 10",
+      "upstream_original_path": "internal/sound/sounds/trio_10.mp3",
+      "sha256": "d43cb9db7d7e60c3e44116d5fde50b62c3ccae60ce2569d48908f98d8d95d44a",
+      "bytes": 4929
+    },
+    {
+      "event": "male.pair_11",
+      "file": "male/pair_11.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_J.mp3",
+      "subtitle_zh_cn": "对J",
+      "subtitle_en_us": "Pair of J",
+      "upstream_original_path": "internal/sound/sounds/pair_J.mp3",
+      "sha256": "7cf880492608073ed6595bf79725cac7cea817f0e975d7bf4f8a486853b21101",
+      "bytes": 2891
+    },
+    {
+      "event": "male.triple_11",
+      "file": "male/triple_11.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_J.mp3",
+      "subtitle_zh_cn": "三张J",
+      "subtitle_en_us": "Three J",
+      "upstream_original_path": "internal/sound/sounds/trio_J.mp3",
+      "sha256": "ff4706de09edb595265d6225279e98074c61b4daf60843d658990d6cba70fd19",
+      "bytes": 4929
+    },
+    {
+      "event": "male.pair_12",
+      "file": "male/pair_12.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_Q.mp3",
+      "subtitle_zh_cn": "对Q",
+      "subtitle_en_us": "Pair of Q",
+      "upstream_original_path": "internal/sound/sounds/pair_Q.mp3",
+      "sha256": "f1d10c58fd85368f2ba048a6febf8e2e7c26b484b115d0edfa26e0ca64bb5054",
+      "bytes": 3205
+    },
+    {
+      "event": "male.triple_12",
+      "file": "male/triple_12.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_Q.mp3",
+      "subtitle_zh_cn": "三张Q",
+      "subtitle_en_us": "Three Q",
+      "upstream_original_path": "internal/sound/sounds/trio_Q.mp3",
+      "sha256": "a4f2962b2596c40f662f98f034a2a4f07f4cf7da05c06a3f82deddffda213fb3",
+      "bytes": 6026
+    },
+    {
+      "event": "male.pair_13",
+      "file": "male/pair_13.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_K.mp3",
+      "subtitle_zh_cn": "对K",
+      "subtitle_en_us": "Pair of K",
+      "upstream_original_path": "internal/sound/sounds/pair_K.mp3",
+      "sha256": "c68267018797bd6bcacb9b0c763a6466cdef6e48e9fd28ef49758deb1b4f239e",
+      "bytes": 3361
+    },
+    {
+      "event": "male.triple_13",
+      "file": "male/triple_13.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_K.mp3",
+      "subtitle_zh_cn": "三张K",
+      "subtitle_en_us": "Three K",
+      "upstream_original_path": "internal/sound/sounds/trio_K.mp3",
+      "sha256": "1e444c808925e4c95e9b13a347459118f83a46eeacdd02434acf1000540c3f0c",
+      "bytes": 5086
+    },
+    {
+      "event": "male.pair_14",
+      "file": "male/pair_14.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_A.mp3",
+      "subtitle_zh_cn": "对A",
+      "subtitle_en_us": "Pair of A",
+      "upstream_original_path": "internal/sound/sounds/pair_A.mp3",
+      "sha256": "161f6ae1f2f16bc8734540cf7c97b8d4e1fdbbbf6120309c877fc19d73c0322c",
+      "bytes": 3832
+    },
+    {
+      "event": "male.triple_14",
+      "file": "male/triple_14.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_A.mp3",
+      "subtitle_zh_cn": "三张A",
+      "subtitle_en_us": "Three A",
+      "upstream_original_path": "internal/sound/sounds/trio_A.mp3",
+      "sha256": "c04c1199d6da3029a5669ddee2bfa69f5e700c8343177dc557a4d0c34e0a9f78",
+      "bytes": 5086
+    },
+    {
+      "event": "male.pair_15",
+      "file": "male/pair_15.ogg",
+      "path": "internal/sound/gaming/voices/male/pair/pair_2.mp3",
+      "subtitle_zh_cn": "对2",
+      "subtitle_en_us": "Pair of 2",
+      "upstream_original_path": "internal/sound/sounds/pair_2.mp3",
+      "sha256": "b560a2fccc3b381cf84bcaf5aacfa35bf42e331b03ec421e607e977156a56be9",
+      "bytes": 3361
+    },
+    {
+      "event": "male.triple_15",
+      "file": "male/triple_15.ogg",
+      "path": "internal/sound/gaming/voices/male/trio/trio_2.mp3",
+      "subtitle_zh_cn": "三张2",
+      "subtitle_en_us": "Three 2",
+      "upstream_original_path": "internal/sound/sounds/trio_2.mp3",
+      "sha256": "2cfa373d43f679f1558d284726eb2b829d7899bcfdb3fe79e6b910f4e5fa73ab",
+      "bytes": 5399
+    },
+    {
+      "event": "male.triple_single",
+      "file": "male/triple_single.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_trio_single.mp3",
+      "subtitle_zh_cn": "三带一",
+      "subtitle_en_us": "Three with one",
+      "upstream_original_path": "internal/sound/sounds/type_trio_single.mp3",
+      "sha256": "d4be54eb184b0ddc2135a319b5667ec20ffbabb1a86d4c3f10672ace7e5d34b9",
+      "bytes": 5556
+    },
+    {
+      "event": "male.triple_pair",
+      "file": "male/triple_pair.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_trio_pair.mp3",
+      "subtitle_zh_cn": "三带一对",
+      "subtitle_en_us": "Three with a pair",
+      "upstream_original_path": "internal/sound/sounds/type_trio_pair.mp3",
+      "sha256": "fab46edbfa02e452e9c3038dc18f0b6e2ec7a33607ac7e4e8bfe7951d429e1c4",
+      "bytes": 7123
+    },
+    {
+      "event": "male.straight",
+      "file": "male/straight.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_straight.mp3",
+      "subtitle_zh_cn": "顺子",
+      "subtitle_en_us": "Straight",
+      "upstream_original_path": "internal/sound/sounds/type_straight.mp3",
+      "sha256": "edc54a7583e1ee416638138cf6d3cfc38406cfc6a6d82e6c8b3c13288e2971bd",
+      "bytes": 4615
+    },
+    {
+      "event": "male.pair_straight",
+      "file": "male/pair_straight.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_pairstraight.mp3",
+      "subtitle_zh_cn": "连对",
+      "subtitle_en_us": "Consecutive pairs",
+      "upstream_original_path": "internal/sound/sounds/type_pairstraight.mp3",
+      "sha256": "7e03dc95ea5410d829d1a304250fe2e290d7d639c68c7eb35f954c1eea2695e9",
+      "bytes": 3832
+    },
+    {
+      "event": "male.airplane",
+      "file": "male/airplane.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_plane.mp3",
+      "subtitle_zh_cn": "飞机",
+      "subtitle_en_us": "Airplane",
+      "upstream_original_path": "internal/sound/sounds/type_plane.mp3",
+      "sha256": "332e1b3b6b71dfffaa37d0314100b5129a8f3c4a621045dc4cf789b4bb8a0faf",
+      "bytes": 5242
+    },
+    {
+      "event": "male.four_single",
+      "file": "male/four_single.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_four_two.mp3",
+      "subtitle_zh_cn": "四带二",
+      "subtitle_en_us": "Four with two",
+      "upstream_original_path": "internal/sound/sounds/type_four_two.mp3",
+      "sha256": "8649671986fc658912fd6cfd1de7cf5c25985e8883812ded31caa0cce1dedaaa",
+      "bytes": 4459
+    },
+    {
+      "event": "male.four_pair",
+      "file": "male/four_pair.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_four_twopair.mp3",
+      "subtitle_zh_cn": "四带两对",
+      "subtitle_en_us": "Four with two pairs",
+      "upstream_original_path": "internal/sound/sounds/type_four_twopair.mp3",
+      "sha256": "ecb913f86a7c505c24cc4f38cb6f65d469bc21ae3e408614e45584b0dd871244",
+      "bytes": 6339
+    },
+    {
+      "event": "male.bomb",
+      "file": "male/bomb.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_bomb.mp3",
+      "subtitle_zh_cn": "炸弹",
+      "subtitle_en_us": "Bomb",
+      "upstream_original_path": "internal/sound/sounds/type_bomb.mp3",
+      "sha256": "d83dfce8e44af52722a1174b5c7e8f1bdbc1e246a4f82059b775b9ba586ca163",
+      "bytes": 3675
+    },
+    {
+      "event": "male.rocket",
+      "file": "male/rocket.ogg",
+      "path": "internal/sound/gaming/voices/male/type/type_rocket.mp3",
+      "subtitle_zh_cn": "王炸",
+      "subtitle_en_us": "Rocket",
+      "upstream_original_path": "internal/sound/sounds/type_rocket.mp3",
+      "sha256": "3ced149ee72698f086764ec4de82e212c3f50507d1fd8efc1328c1e05536b582",
+      "bytes": 5086
+    },
+    {
+      "event": "male.bid_0",
+      "file": "male/bid_0.ogg",
+      "path": "internal/sound/gaming/voices/male/bid/bid_nocall.mp3",
+      "subtitle_zh_cn": "不叫",
+      "subtitle_en_us": "No bid",
+      "upstream_original_path": "internal/sound/sounds/bid_nocall.mp3",
+      "sha256": "93f745041fac498bfb32552e59ace8078b1edf5cf88a666f30e1be2e70e5db11",
+      "bytes": 4145
+    },
+    {
+      "event": "male.bid_call",
+      "file": "male/bid_call.ogg",
+      "path": "internal/sound/gaming/voices/male/bid/bid_call.mp3",
+      "subtitle_zh_cn": "叫地主",
+      "subtitle_en_us": "Call landlord",
+      "upstream_original_path": "internal/sound/sounds/bid_call.mp3",
+      "sha256": "f8fe84605a4f3ace931b185aa27d16131c081a5094d96f5e726796fa8b1e1129",
+      "bytes": 6026
+    },
+    {
+      "event": "male.pass",
+      "file": "male/pass_buyao.ogg",
+      "path": "internal/sound/gaming/voices/male/pass/pass_buyao.mp3",
+      "subtitle_zh_cn": "不出",
+      "subtitle_en_us": "Pass",
+      "upstream_original_path": "internal/sound/sounds/pass_buyao.mp3",
+      "sha256": "1a4ba845113c31b91956ec5f401ec83d6574ccd8003985522eb589b2bc1a0313",
+      "bytes": 3048
+    },
+    {
+      "event": "male.pass",
+      "file": "male/pass_guo.ogg",
+      "path": "internal/sound/gaming/voices/male/pass/pass_guo.mp3",
+      "subtitle_zh_cn": "不出",
+      "subtitle_en_us": "Pass",
+      "upstream_original_path": "internal/sound/sounds/pass_guo.mp3",
+      "sha256": "68391d04ec2b7b64013694ad0f3762fc498c7e4ca5340ddc1ddfbc0888c0274d",
+      "bytes": 2264
+    }
+  ],
+  "adaptation_date": "2026-10-05"
+}

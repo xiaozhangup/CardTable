@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "uno:item/jade_yellow_7_gui"
-  }
-}

@@ -32,8 +32,8 @@ interface GameSession {
     val participants: List<Participant>
     val active: Boolean
     val supportsBots: Boolean get() = false
-    fun addBot(id: UUID, name: String): Participant = throw IllegalArgumentException("这个游戏尚未支持人机。")
-    fun removeBot(id: UUID): Unit = throw IllegalArgumentException("这个游戏尚未支持人机。")
+    fun addBot(id: UUID, name: String): Participant = throw IllegalArgumentException("这个游戏尚未支持机器人")
+    fun removeBot(id: UUID): Unit = throw IllegalArgumentException("这个游戏尚未支持机器人")
     fun join(player: Player)
     fun leave(player: Player)
     fun act(player: Player, action: String, argument: String? = null)
@@ -59,7 +59,7 @@ data class GameView(
     val multiplier: String = "",
     val note: String = "",
     val backAsset: String = "back",
-    val leaveDescription: List<String> = listOf("离桌、断线或超出距离按本桌游戏规则处理")
+    val leaveDescription: List<String> = listOf("离桌, 断线或超出距离按本桌游戏规则处理")
 )
 
 interface GameEconomy {

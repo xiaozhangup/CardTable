@@ -10,13 +10,17 @@ import me.xiaozhangup.cardtable.api.GameView
 import me.xiaozhangup.cardtable.api.Participant
 import me.xiaozhangup.cardtable.api.PlayerView
 import me.xiaozhangup.cardtable.api.TableCardPile
+import me.xiaozhangup.cardtable.api.TablePileLayout
 import me.xiaozhangup.cardtable.api.TableHeader
 import me.xiaozhangup.cardtable.api.TableHeaderView
 import me.xiaozhangup.cardtable.api.TablePlay
 import me.xiaozhangup.cardtable.api.TablePlayEvents
+import me.xiaozhangup.cardtable.api.TablePlayerJoin
 import me.xiaozhangup.cardtable.api.TableTurnOrder
 import me.xiaozhangup.cardtable.api.TurnDirection
+import me.xiaozhangup.cardtable.api.TurnDirectionPlacement
 import me.xiaozhangup.cardtable.table.TableConfig
+import me.xiaozhangup.cardtable.util.requireInput
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
@@ -31,31 +35,35 @@ class DoudizhuProvider : GameProvider {
     override val displayName: String = "斗地主"
 
     override fun validate(table: TableConfig) {
-        require(table.options.keys.all { it == "laizi" }) { "斗地主只支持 laizi 选项。" }
-        require(table.options["laizi"] == null || table.options["laizi"] in setOf("true", "false")) { "laizi 只能为 true 或 false。" }
+        requireInput(table.options.keys.all { it == "laizi" }, "Dou Dizhu only supports the 'laizi' option") {
+            "斗地主只支持 laizi 选项"
+        }
+        requireInput(table.options["laizi"] == null || table.options["laizi"] in setOf("true", "false"), "The 'laizi' option must be true or false") {
+            "laizi 只能为 true 或 false"
+        }
     }
 
     override fun create(context: GameContext, table: TableConfig): GameSession = DoudizhuSession(context, table)
 }
 
-private class DoudizhuSession(context: GameContext, override val table: TableConfig) : GameSession, TableCardPile, TableTurnOrder, TablePlayEvents, TableHeader {
+private class DoudizhuSession(context: GameContext, override val table: TableConfig) : GameSession, TablePlayerJoin, TableCardPile, TableTurnOrder, TablePlayEvents, TableHeader {
     private val manager = DoudizhuController(context.plugin as CardTablePlugin).apply {
         onChange = { context.changed() }
         onMessage = { _, message -> context.broadcast(message) }
-        onVoice = { _, event ->
-            val voice = when {
-                event == "deal" -> "start"
-                // 发牌时已播开局；春天后还会收到获胜事件，同一结果只播一次。
-                event == "start" || event == "spring" || event == "anti_spring" -> null
-                event == "landlord_win" || event == "farmer_win" -> "win"
-                event.startsWith("play_") -> when (val type = event.removePrefix("play_").lowercase(Locale.ROOT)) {
-                    "four_two_single" -> "four_single"
-                    "four_two_pair" -> "four_pair"
-                    else -> type
-                }
-                else -> event
+        onVoice = { state, event ->
+            val voice = when (event) {
+                "bid_0" -> "bid_0"
+                // 上游只有“叫地主”，具体叫分继续由文字显示。
+                "bid_1", "bid_2", "bid_3" -> "bid_call"
+                "pass" -> "pass"
+                // Controller 已写入 previous；mainRank 包含癞子的实际解释。
+                else -> if (event.startsWith("play_")) state.previous!!.voiceKey() else null
             }
-            if (voice != null) context.voice(voice)
+            // 无对应录音的开局/结算不播报，最后一手牌也不会被结算语音重叠。
+            if (voice != null) {
+                val bank = context.plugin.settings.doudizhuVoice
+                context.voice("doudizhu:voice.$bank.$voice")
+            }
         }
         add(table)
     }
@@ -66,15 +74,19 @@ private class DoudizhuSession(context: GameContext, override val table: TableCon
     override val active: Boolean get() = runtime.phase != Phase.WAITING
     // Increasing seat angles (x = sin, z = cos) run counterclockwise from above.
     override val turnDirection: TurnDirection? get() = if (active) TurnDirection.COUNTERCLOCKWISE else null
+    override val directionPlacement: TurnDirectionPlacement = TurnDirectionPlacement.HEADER
     override val lastTablePlay: TablePlay? get() = runtime.playedPlays.lastOrNull()?.let { play ->
         TablePlay(runtime.playSequence, runtime.lastPlaySeat, publicFaces(play, runtime.lastPlayWildRank))
     }
     override val seatCount: Int = 3
+    override val tablePileLayout: TablePileLayout = TablePileLayout.SCATTERED
     override val supportsBots: Boolean = true
     override fun addBot(id: UUID, name: String): Participant = participant(manager.joinBot(id, name, table.id))
     override fun removeBot(id: UUID) = manager.removeBot(id)
 
     override fun join(player: Player) = manager.join(player, table.id)
+    override fun join(player: Player, prepareSeat: (Participant) -> Unit) =
+        manager.join(player, table.id) { prepareSeat(participant(it)) }
     override fun leave(player: Player) = manager.leave(player)
     override fun tick() = manager.tick()
     override fun close() = manager.shutdown()
@@ -120,20 +132,20 @@ private class DoudizhuSession(context: GameContext, override val table: TableCon
     override fun act(player: Player, action: String, argument: String?) {
         when (action) {
             "ready" -> manager.ready(player)
-            "bid" -> manager.bid(player, argument?.toIntOrNull() ?: throw IllegalArgumentException("请选择 0、1、2、3 分。"))
+            "bid" -> manager.bid(player, argument?.toIntOrNull() ?: throw IllegalArgumentException("请选择 0, 1, 2, 3 分"))
             "play" -> manager.play(player)
             "pass" -> manager.pass(player)
             "hint" -> manager.hint(player)
             "select" -> {
                 val seat = runtime.seats.firstOrNull { it?.playerId == player.uniqueId }
-                    ?: throw IllegalArgumentException("请先加入这张牌桌。")
-                require(runtime.phase == Phase.BIDDING || runtime.phase == Phase.PLAYING) { "本局尚未发牌。" }
-                val id = argument?.toIntOrNull() ?: throw IllegalArgumentException("请选择手中的一张牌。")
-                require(seat.hand.any { it.id == id }) { "这张牌不在你的手牌中。" }
+                    ?: throw IllegalArgumentException("请先加入这张牌桌")
+                require(runtime.phase == Phase.BIDDING || runtime.phase == Phase.PLAYING) { "本局尚未发牌" }
+                val id = argument?.toIntOrNull() ?: throw IllegalArgumentException("请选择手中的一张牌")
+                require(seat.hand.any { it.id == id }) { "这张牌不在你的手牌中" }
                 if (!seat.selected.add(id)) seat.selected.remove(id)
                 manager.onChange(runtime)
             }
-            else -> throw IllegalArgumentException("未知操作：$action。")
+            else -> throw IllegalArgumentException("未知操作: $action")
         }
     }
 
@@ -151,7 +163,7 @@ private class DoudizhuSession(context: GameContext, override val table: TableCon
             PlayerView(
                 participant(seat),
                 role = when (runtime.phase) {
-                    Phase.WAITING -> if (seat.bot) "人机" else "玩家"
+                    Phase.WAITING -> if (seat.bot) "机器人" else "玩家"
                     Phase.BIDDING -> "待定"
                     Phase.PLAYING -> if (seat.index == runtime.landlord) "地主" else "农民"
                 },
@@ -175,17 +187,17 @@ private class DoudizhuSession(context: GameContext, override val table: TableCon
                 GameControl("bid", if (score == 0) "不叫" else "$score 分", "doudizhu:bid_$score", score.toString())
             }
             else -> buildList {
-                add(GameControl("play", "出牌", "doudizhu:play", description = listOf("先点击手牌选中，再出牌。")))
+                add(GameControl("play", "出牌", "doudizhu:play", description = listOf("先点击手牌选中, 再出牌")))
                 if (previous != null) add(GameControl("pass", "不要", "doudizhu:pass"))
-                add(GameControl("hint", "提示", "doudizhu:hint", description = listOf("选中一组可以出的牌。")))
+                add(GameControl("hint", "提示", "doudizhu:hint", description = listOf("选中一组可以出的牌")))
             }
         }
         val note = buildList {
-            runtime.wildRank?.let { add("癞子：${Card.rankLabel(it)}") }
+            runtime.wildRank?.let { add("癞子: ${Card.rankLabel(it)}") }
             previous?.let {
-                add("上一手：${runtime.seats[runtime.previousSeat]!!.playerName}  ${it.label}")
+                add("上一手: ${runtime.seats[runtime.previousSeat]!!.playerName}  ${it.label}")
             }
-        }.joinToString("；")
+        }.joinToString("; ")
         return GameView(
             status = status,
             players = players,
@@ -209,10 +221,25 @@ private class DoudizhuSession(context: GameContext, override val table: TableCon
     private fun face(card: Card, effectiveRank: Int = card.rank, selected: Boolean = false, wildRank: Int? = runtime.wildRank): CardFace {
         val name = buildString {
             append(card.label)
-            if (card.rank == wildRank) append("（癞子）")
+            if (card.rank == wildRank) append("(癞子)")
             if (effectiveRank != card.rank) append(" → ${Card.rankLabel(effectiveRank)}")
         }
         val shownAsset = if (effectiveRank == card.rank) card.assetId else Card(card.id / 13 * 13 + effectiveRank - 3).assetId
         return CardFace(shownAsset, name, card.id.toString(), selected)
     }
+}
+
+private fun Play.voiceKey(): String = when (type) {
+    PlayType.SINGLE -> "single_$mainRank"
+    PlayType.PAIR -> "pair_$mainRank"
+    PlayType.TRIPLE -> "triple_$mainRank"
+    PlayType.TRIPLE_SINGLE -> "triple_single"
+    PlayType.TRIPLE_PAIR -> "triple_pair"
+    PlayType.STRAIGHT -> "straight"
+    PlayType.PAIR_STRAIGHT -> "pair_straight"
+    PlayType.AIRPLANE, PlayType.AIRPLANE_SINGLE, PlayType.AIRPLANE_PAIR -> "airplane"
+    PlayType.FOUR_TWO_SINGLE -> "four_single"
+    PlayType.FOUR_TWO_PAIR -> "four_pair"
+    PlayType.BOMB -> "bomb"
+    PlayType.ROCKET -> "rocket"
 }

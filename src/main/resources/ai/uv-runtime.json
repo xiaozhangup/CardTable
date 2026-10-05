@@ -1,0 +1,42 @@
+{
+  "version": "0.12.15",
+  "metadata": "https://pypi.org/pypi/uv/0.12.15/json",
+  "platforms": {
+    "linux-x86_64": {
+      "filename": "uv-0.12.15-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/1e/fd/432451d732917c49152a291de3ef171aa6b0f1a22d39780fb2c1f085ca4c/uv-0.12.15-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "aee9802f46bae436bd91751bb33ddeb379ef1596b5c19df193219d545d244b60",
+      "entry": "uv-0.12.15.data/scripts/uv"
+    },
+    "linux-aarch64": {
+      "filename": "uv-0.12.15-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.musllinux_1_1_aarch64.whl",
+      "url": "https://files.pythonhosted.org/packages/49/1a/eb1f5f38b09f9aa6d31cfc8d29ca919ee3d8368dd6ba01883a1f9dda7259/uv-0.12.15-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.musllinux_1_1_aarch64.whl",
+      "sha256": "a673bc39e677eaa012f618cab2e6e99fb82919f37ea45043fca530e9ca94c082",
+      "entry": "uv-0.12.15.data/scripts/uv"
+    },
+    "windows-x86_64": {
+      "filename": "uv-0.12.15-py3-none-win_amd64.whl",
+      "url": "https://files.pythonhosted.org/packages/ac/d8/0b4fdfb56c79a307237295f8a0f7c64a34d5d1e8c090fab0bc1201cab2a8/uv-0.12.15-py3-none-win_amd64.whl",
+      "sha256": "39af7d437b6d1f962f11c0b77f891d302ea675a0ebbcfe9792f633d843740a25",
+      "entry": "uv-0.12.15.data/scripts/uv.exe"
+    },
+    "windows-aarch64": {
+      "filename": "uv-0.12.15-py3-none-win_arm64.whl",
+      "url": "https://files.pythonhosted.org/packages/fa/0b/42464bda69be2673768b6abb52458773c19fe231dd80fa1a69f2e87b3fbe/uv-0.12.15-py3-none-win_arm64.whl",
+      "sha256": "2ed8c7fdf466c5c90451d356510fea6850e7cd44e70c59717bc9ecf2ce88a4a2",
+      "entry": "uv-0.12.15.data/scripts/uv.exe"
+    },
+    "macos-x86_64": {
+      "filename": "uv-0.12.15-py3-none-macosx_10_12_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/18/73/b01ea8bbab093efb573fad02bed6d5c00a4ea0edccc4d2faa5303854dbda/uv-0.12.15-py3-none-macosx_10_12_x86_64.whl",
+      "sha256": "a1499a507461774f222114732f145d50579e75a3fab0d91ee680c0ed04322552",
+      "entry": "uv-0.12.15.data/scripts/uv"
+    },
+    "macos-aarch64": {
+      "filename": "uv-0.12.15-py3-none-macosx_11_0_arm64.whl",
+      "url": "https://files.pythonhosted.org/packages/84/62/82e86e03e111463ab224c132c0f0e6b649d98d22710b177fbc000d379103/uv-0.12.15-py3-none-macosx_11_0_arm64.whl",
+      "sha256": "03b2c763f8b3c5595fa103221bc667e3af0146f8cb327aa06630ebcf5cfe16e9",
+      "entry": "uv-0.12.15.data/scripts/uv"
+    }
+  }
+}

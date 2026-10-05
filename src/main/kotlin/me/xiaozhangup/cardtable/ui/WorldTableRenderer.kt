@@ -1,7 +1,9 @@
 package me.xiaozhangup.cardtable.ui
 
+import io.papermc.paper.datacomponent.item.ResolvableProfile
 import me.xiaozhangup.cardtable.CardTablePlugin
 import me.xiaozhangup.cardtable.api.*
+import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
@@ -29,8 +31,10 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 import java.util.UUID
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sin
 import kotlin.math.tan
 
 class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
@@ -69,9 +73,9 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
         val targets: MutableMap<UUID, MutableList<Target>> = mutableMapOf(),
         val status: MutableList<TextDisplay> = mutableListOf(),
         var direction: TextDisplay? = null,
-        var surface: Display? = null,
+        val furniture: MutableList<Display> = mutableListOf(),
         var snapshot: List<GameView>? = null,
-        var headerSnapshot: TableHeaderView? = null,
+        var headerSnapshot: Component? = null,
         var pileSnapshot: List<CardFace>? = null,
         var pileSkin: String? = null
     )
@@ -91,6 +95,7 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
     private val handPages = mutableMapOf<UUID, Int>()
     private val chunkUsers = mutableMapOf<String, Int>()
     private val bots = BotMannequins(plugin).also { Bukkit.getPluginManager().registerEvents(it, plugin) }
+    private val participantStatus = ParticipantStatusDisplays().also { Bukkit.getPluginManager().registerEvents(it, plugin) }
 
     fun add(room: GameSession) {
         val table = room.table
@@ -108,30 +113,60 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
         rendered[table.id] = output
         val half = TableLayout.tableHalfSize(room.seatCount)
         // Every piece of furniture is a non-pickable display; only empty seat pads accept joining.
-        output.surface = surface(room)
-        output.base += output.surface!!
-        for (x in listOf(-half + 0.23, half - 0.23)) for (z in listOf(-half + 0.23, half - 0.23)) {
-            output.base += block(center.clone().add(x, 0.0, z), Material.DARK_OAK_PLANKS, 0.18f, 0.63f, 0.18f)
-        }
+        output.furniture += furniture(room)
+        output.base += output.furniture
         for (seat in 0 until room.seatCount) {
-            val point = TableLayout.seatLocation(table, seat, room.seatCount)
-            output.base += block(point.clone().add(0.0, TableLayout.SEAT_HEIGHT - 0.11, 0.0), Material.SPRUCE_PLANKS, 0.70f, 0.11f, 0.70f)
-            output.base += block(point, Material.DARK_OAK_PLANKS, 0.30f, 0.49f, 0.30f)
             val outward = TableLayout.radial(table, seat, room.seatCount)
             val statusPoint = center.clone().add(outward.clone().multiply(half - 0.35)).add(0.0, tableCardHeight(room), 0.0)
             output.status += tableText(statusPoint, outward)
         }
         output.base += output.status
-        // These 6 x 5 logical-pixel glyphs stay centered and retain the previous 0.45-block width.
-        output.direction = tableText(center.clone().add(0.0, tableCardHeight(room), 0.0),
-            Vector(0.0, 0.0, 1.0), 3.0f, 0.1125f)
-        output.base += output.direction!!
+        if ((room as? TableTurnOrder)?.directionPlacement != TurnDirectionPlacement.HEADER) {
+            // These 6 x 5 logical-pixel glyphs stay centered and retain the previous 0.45-block width.
+            output.direction = tableText(center.clone().add(0.0, tableCardHeight(room), 0.0),
+                Vector(0.0, 0.0, 1.0), 3.0f, 0.1125f)
+            output.base += output.direction!!
+        }
+    }
+
+    private fun participantText(view: PlayerView, active: Boolean): Component {
+        val text = Component.text().color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
+        if (active) {
+            val roleColor = when (view.role) {
+                "地主" -> TextColor.color(0xD4BA85)
+                "农民" -> TextColor.color(0x9BC7B6)
+                "UNO", "玩家" -> NamedTextColor.YELLOW
+                "机器人" -> NamedTextColor.GOLD
+                else -> NamedTextColor.GRAY
+            }
+            text.append(Component.text(if (view.role == "UNO") "UNO!" else view.role, roleColor))
+            if (view.participant.bot && view.role != "机器人") text.append(Component.text("  机器人", NamedTextColor.GOLD))
+            text.append(Component.newline()).append(Component.text("手牌 "))
+                .append(Component.text(view.count, NamedTextColor.WHITE)).append(Component.text(" 张"))
+        } else if (view.participant.bot && view.ready) {
+            text.append(Component.text("准备就绪", TextColor.color(0x9BC7B6)))
+                .append(Component.newline()).append(Component.text("机器人", NamedTextColor.GOLD))
+        } else {
+            if (view.participant.bot) text.append(Component.text("机器人", NamedTextColor.GOLD))
+                .append(Component.newline())
+            text.append(Component.text(if (view.ready) "准备就绪" else "未准备",
+                if (view.ready) TextColor.color(0x9BC7B6) else NamedTextColor.GRAY))
+        }
+        return text.build()
     }
 
     fun refresh(room: GameSession) {
         val output = rendered.getValue(room.table.id)
         bots.refresh(room.table, room.seatCount, room.participants.filter { it.bot })
         val public = room.view(null)
+        participantStatus.refresh(room.table.id, public.players.mapNotNull { view ->
+            val participant = view.participant
+            val avatar = if (participant.bot) bots.entity(room.table.id, participant.id) else Bukkit.getPlayer(participant.id)
+            if (avatar == null) return@mapNotNull null
+            ParticipantStatusDisplays.Status(participant.id, avatar,
+                TableLayout.handStatusLocation(room.table, participant.seat, room.seatCount), participantText(view, room.active),
+                lines = if (room.active || participant.bot) 2 else 1)
+        })
         if (room.active && !output.active) {
             output.draws.forEach { it.flight.entity.remove() }
             output.draws.clear()
@@ -143,8 +178,7 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
         room.participants.filterNot { it.bot }.forEach { participant ->
             Bukkit.getPlayer(participant.id)?.let { owner ->
                 val view = room.view(participant.id)
-                owner.sendActionBar(Component.text("手牌 ${view.hand.size} 张", NamedTextColor.WHITE)
-                    .append(Component.text("  已选 ${view.hand.count { it.selected }} 张", NamedTextColor.GREEN)))
+                owner.sendActionBar(Component.text("◎ 手牌 ${view.hand.size} 张  已选 ${view.hand.count { it.selected }} 张", TextColor.color(0x9bc7b6)))
             }
         }
         refreshStatus(room, output, public)
@@ -153,15 +187,26 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
             Component.text(plugin.tables.provider(room.table.game)!!.displayName, TextColor.color(0x9BC7B6)),
             Component.text(if (room.active) "对局中" else "${room.participants.size}/${room.seatCount} 人", NamedTextColor.WHITE)
         )
-        if (views == output.snapshot && header == output.headerSnapshot) return
+        var heading = header.title.append(Component.newline()).append(header.detail)
+        val order = room as? TableTurnOrder
+        if (order?.directionPlacement == TurnDirectionPlacement.HEADER) {
+            val direction = when (order.turnDirection) {
+                TurnDirection.CLOCKWISE -> "顺时针"
+                TurnDirection.COUNTERCLOCKWISE -> "逆时针"
+                null -> null
+            }
+            if (direction != null) heading = heading.append(Component.newline())
+                .append(Component.text("出牌方向 ", NamedTextColor.GRAY))
+                .append(Component.text(direction, NamedTextColor.WHITE))
+        }
+        if (views == output.snapshot && heading == output.headerSnapshot) return
         output.snapshot = views
-        output.headerSnapshot = header
+        output.headerSnapshot = heading
         output.frame.begin()
         output.targets.clear()
         val table = room.table
         val radius = TableLayout.radius(room.seatCount)
-        headerText(output.frame, table.center.clone().add(0.0, TableLayout.TABLE_HEIGHT + 1.94, 0.0),
-            header.title.append(Component.newline()).append(header.detail))
+        headerText(output.frame, table.center.clone().add(0.0, TableLayout.TABLE_HEIGHT + 1.94, 0.0), heading)
         for (seat in 0 until room.seatCount) {
             val playerView = public.players.firstOrNull { it.participant.seat == seat }
             val outward = TableLayout.radial(table, seat, room.seatCount)
@@ -173,9 +218,8 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
                 interaction(output.frame, "join:$seat", seatPoint.clone().add(0.0, 0.46, 0.0), table.id, "join", null, 0.70f, 0.20f)
                 continue
             }
-            val name = "${playerView.participant.name}${if (playerView.participant.bot) "  人机" else ""}\n${playerView.role}  ${playerView.count} 张${if (playerView.ready && !room.active) "  已准备" else ""}"
-            text(output.frame, "name:$seat", point(radius + 0.20, 2.15), name, null, 0.46f)
-            val back = if (playerView.count > 0) frameCard(output.frame, "back:${playerView.participant.id}", point(radius - 0.75, 0.84),
+            val back = if (playerView.count > 0) frameCard(output.frame, "back:${playerView.participant.id}",
+                point(radius - TableLayout.PUBLIC_HAND_DISTANCE, TableLayout.PUBLIC_HAND_HEIGHT),
                 CardFace(public.backAsset, "手牌", ""), table.skin, TableLayout.facing(outward, 1.5707964f), null, 0.46f) else null
             if (playerView.participant.bot) continue
             val owner = Bukkit.getPlayer(playerView.participant.id) ?: continue
@@ -204,7 +248,7 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
             }
             val controls = buildList {
                 addAll(handView.controls)
-                if (!room.active && room.supportsBots && room.table.bet == 0.0 && room.participants.size < room.seatCount) add(GameControl("cardtable:bots", "补齐人机", "doudizhu:table"))
+                if (!room.active && room.supportsBots && room.table.bet == 0.0 && room.participants.size < room.seatCount) add(GameControl("cardtable:bots", "补齐机器人", "doudizhu:table"))
             }
             controls.chunked(3).forEachIndexed { row, buttons ->
                 buttons.forEachIndexed { index, control ->
@@ -242,16 +286,22 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
                     table.skin, recapRotation, owner, 0.46f)
             }
         }
-        val up = Quaternionf().rotationY(1.5707964f).rotateX(1.5707964f)
+        val scattered = (room as? TableCardPile)?.tablePileLayout == TablePileLayout.SCATTERED
+        val up = Quaternionf().rotationY(if (scattered) 0f else 1.5707964f).rotateX(1.5707964f)
+        val bottomScale = if (scattered) 0.41f else 0.44f
         public.bottomCards.forEachIndexed { index, face ->
-            frameCard(output.frame, "bottom:$index", table.center.clone().add(-0.60,
-                tableCardHeight(room), (index - (public.bottomCards.size - 1) / 2.0) * 0.29), face, table.skin, up, null, 0.44f)
+            // Three centered cards fit inside the scattered pile's clear inner area.
+            val position = if (scattered) table.center.clone().add((index - (public.bottomCards.size - 1) / 2.0) * 0.26, tableCardHeight(room), 0.0)
+                else table.center.clone().add(-0.60, tableCardHeight(room), (index - (public.bottomCards.size - 1) / 2.0) * 0.29)
+            frameCard(output.frame, "bottom:$index", position, face, table.skin, up, null, bottomScale)
         }
         output.frame.end()
     }
 
-    private fun tableCardHeight(room: GameSession): Double =
-        TableLayout.TABLE_HEIGHT + max(0.04, TableLayout.tableHalfSize(room.seatCount) / 32.0) + 0.012
+    private fun tableTopHeight(room: GameSession): Double =
+        TableLayout.TABLE_HEIGHT + max(0.04, TableLayout.tableHalfSize(room.seatCount) / 32.0)
+
+    private fun tableCardHeight(room: GameSession): Double = tableTopHeight(room) + 0.012
 
     private fun tableText(point: Location, outward: Vector, scale: Float = 0.38f, centerY: Float = 0.25f): TextDisplay = point.world.spawn(point, TextDisplay::class.java) {
         prepare(it)
@@ -265,14 +315,17 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
             rotation, Vector3f(scale), Quaternionf())
     }
 
-    private fun refreshStatus(room: GameSession, output: Rendered, view: GameView) {
-        val current = view.players.firstOrNull { it.current }
-        val symbol = when ((room as? TableTurnOrder)?.turnDirection) {
+    private fun turnDirectionSymbol(room: GameSession): String =
+        when ((room as? TableTurnOrder)?.turnDirection) {
             TurnDirection.CLOCKWISE -> "⟳"
             TurnDirection.COUNTERCLOCKWISE -> "⟲"
             null -> ""
         }
-        output.direction!!.text(Component.text(symbol, NamedTextColor.WHITE))
+
+    private fun refreshStatus(room: GameSession, output: Rendered, view: GameView) {
+        val current = view.players.firstOrNull { it.current }
+        output.direction?.text(Component.text(turnDirectionSymbol(room), NamedTextColor.WHITE)
+            .font(Key.key("minecraft:uniform")))
         val skip = (room as? TableSkipEvents)?.lastTableSkip
         if (skip == null) output.skipped.clear()
         else if (skip.sequence != output.lastSkipSequence) {
@@ -337,6 +390,7 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
     }
 
     private fun refreshPile(room: GameSession, output: Rendered, cards: List<CardFace>) {
+        val scattered = (room as? TableCardPile)?.tablePileLayout == TablePileLayout.SCATTERED
         val play = (room as? TablePlayEvents)?.lastTablePlay
         val newPlay = play?.takeIf { it.sequence != output.lastPlaySequence }
         if (output.pileSnapshot == cards && output.pileSkin == room.table.skin && play?.sequence == output.lastPlaySequence) return
@@ -360,10 +414,11 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
             oldPile.values.forEach(Entity::remove)
         }
         output.lastPlaySequence = play?.sequence
+        if (newPlay != null) bots.swing(room.table.id, newPlay.seat)
         output.pileSnapshot = cards.toList()
         output.pileSkin = room.table.skin
         val keys = cards.mapIndexed { index, face -> "$index:${face.token}" }
-        val first = (cards.size - 16).coerceAtLeast(0)
+        val first = if (scattered) 0 else (cards.size - 16).coerceAtLeast(0)
         output.visiblePile = keys.drop(first).toSet()
         // A fresh event is only animated when its cards are still at the top of the current public pile.
         // UNO may recycle older discards during a penalty before publishing the final view.
@@ -380,11 +435,18 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
             val key = keys[index]
             val animate = index >= animatedStart
             if (key !in output.visiblePile && key !in output.flights && !animate) return@forEachIndexed
-            val x = ((index * 3) % 5 - 2) * 0.018
-            val z = ((index * 7) % 5 - 2) * 0.014
-            val angle = Math.toRadians(((index * 11) % 19 - 9).toDouble()).toFloat()
+            // Absolute order fixes each landing point for the whole round, including later refreshes.
+            // Tangential long edges leave the central bottom cards and outer turn indicators clear.
+            val theta = Math.toRadians(index * 137.5)
+            val radius = 0.68 + index % 3 * 0.02
+            val x = if (scattered) cos(theta) * radius else 0.60 + ((index * 3) % 5 - 2) * 0.018
+            val z = if (scattered) sin(theta) * radius else ((index * 7) % 5 - 2) * 0.014
+            val angle = if (scattered) (-theta + Math.toRadians(((index * 11) % 25 - 12).toDouble())).toFloat()
+                else Math.toRadians(((index * 11) % 19 - 9).toDouble()).toFloat()
             val up = Quaternionf().rotationY(angle).rotateX(1.5707964f)
-            val position = room.table.center.clone().add(0.60 + x, tableCardHeight(room) + (index - first).coerceAtLeast(0) * 0.005, z)
+            // Scattered faces need only a depth bias; a tall stack would hide the flat turn glyphs.
+            val layer = if (scattered) index * 0.00015 else (index - first).coerceAtLeast(0) * 0.005
+            val position = room.table.center.clone().add(x, tableCardHeight(room) + layer, z)
             val model = plugin.items.worldCard(face, room.table.skin)
             if (animate) {
                 val outward = TableLayout.radial(room.table, newPlay!!.seat, room.seatCount)
@@ -422,6 +484,8 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
 
     /** Shares the plugin's synchronous tick; removing a room also removes all of its flights. */
     fun tick() {
+        bots.refreshSkins()
+        participantStatus.tick()
         rendered.values.forEach { output ->
             val iterator = output.flights.iterator()
             while (iterator.hasNext()) {
@@ -505,25 +569,38 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
     }
 
     fun invalidate(id: String) { rendered[id]?.snapshot = null }
+    internal fun botProfile(tableId: String, id: UUID): ResolvableProfile? = bots.entity(tableId, id)?.profile
     fun refreshAssets(room: GameSession) {
         val output = rendered.getValue(room.table.id)
-        output.surface?.let { output.base.remove(it); it.remove() }
-        output.surface = surface(room).also { output.base += it }
+        output.furniture.forEach { output.base.remove(it); it.remove() }
+        output.furniture.clear()
+        output.furniture += furniture(room)
+        output.base += output.furniture
         output.pileSnapshot = null
         invalidate(room.table.id)
         refresh(room)
     }
 
-    private fun surface(room: GameSession): Display {
-        val model = plugin.items.model("doudizhu:tabletop")
-        val point = room.table.center.clone().add(0.0, TableLayout.TABLE_HEIGHT, 0.0)
+    private fun furniture(room: GameSession): List<Display> = buildList {
         val half = TableLayout.tableHalfSize(room.seatCount).toFloat()
-        if (!model.customModel) return block(point.subtract(0.0, 0.04, 0.0), Material.GREEN_WOOL, 2 * half, 0.08f, 2 * half)
+        add(furniture(room.table.center.clone(), "cardtable:table_${max(6, room.seatCount)}",
+            Material.GREEN_WOOL, 2 * half, tableTopHeight(room).toFloat(), 2 * half))
+        for (seat in 0 until room.seatCount) {
+            add(furniture(TableLayout.seatLocation(room.table, seat, room.seatCount), "cardtable:stool",
+                Material.SPRUCE_PLANKS, 0.70f, TableLayout.SEAT_HEIGHT.toFloat(), 0.70f))
+        }
+    }
+
+    private fun furniture(point: Location, id: String, fallback: Material, width: Float, height: Float, depth: Float): Display {
+        val model = plugin.items.model(id)
+        if (!model.customModel) return block(point, fallback, width, height, depth)
         return point.world.spawn(point, ItemDisplay::class.java) {
             prepare(it)
             it.setItemStack(model.stack)
             it.itemDisplayTransform = ItemDisplay.ItemDisplayTransform.FIXED
-            it.transformation = transform(half)
+            // Models encode half-size geometry around [8,8,8]; identity FIXED centers it at the ground origin.
+            // Their symmetric geometry needs no compensation for ItemDisplayRenderer's local Y half-turn.
+            it.transformation = transform(2f)
         }
     }
 
@@ -658,7 +735,7 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
         val action = data.get(actionKey, PersistentDataType.STRING)!!
         if (action == "surface" || duplicate(player)) return true
         plugin.attempt(player) {
-            require(player.world == entity.world && player.location.distanceSquared(entity.location) <= 36) { "请走近牌桌再操作。" }
+            require(player.world == entity.world && player.location.distanceSquared(entity.location) <= 36) { "请走近牌桌再操作" }
             when (action) {
                 "join" -> if (plugin.tables.tableOf(player.uniqueId)?.table?.id != table) plugin.tables.join(player, table)
             }
@@ -667,6 +744,7 @@ class WorldTableRenderer(private val plugin: CardTablePlugin) : Listener {
     }
 
     fun remove(id: String) {
+        participantStatus.remove(id)
         bots.remove(id)
         rendered.remove(id)?.let { room ->
             room.targets.keys.forEach { handPages.remove(it) }

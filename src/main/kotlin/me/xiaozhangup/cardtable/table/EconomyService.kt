@@ -1,10 +1,14 @@
 package me.xiaozhangup.cardtable.table
 
 import me.xiaozhangup.cardtable.api.GameEconomy
+import me.xiaozhangup.cardtable.util.InputException
+import me.xiaozhangup.cardtable.util.ext.severe
+import me.xiaozhangup.cardtable.util.ext.getDataFolder
+import me.xiaozhangup.cardtable.util.ext.warning
+import me.xiaozhangup.cardtable.util.requireInput
+import me.xiaozhangup.crab.configuration.Configuration
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
-import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.plugin.java.JavaPlugin
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.nio.file.Files
@@ -12,7 +16,7 @@ import java.nio.file.StandardCopyOption
 import java.util.UUID
 
 /** Shared economy escrow; its records contain no game-specific state. */
-class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
+class EconomyService : GameEconomy {
     private data class Entry(
         val id: String,
         val roundId: String,
@@ -23,13 +27,13 @@ class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
         var state: String,
     )
 
-    private val file = plugin.dataFolder.resolve("economy.yml")
+    private val file = getDataFolder().resolve("economy.yml")
     private val entries = linkedMapOf<String, Entry>()
     private var lastRetry = 0L
 
     init {
         if (file.exists()) {
-            val yaml = YamlConfiguration.loadConfiguration(file)
+            val yaml = Configuration.loadFromFile(file, concurrent = false)
             val records = yaml.getConfigurationSection("records")
             records?.getKeys(false)?.forEach { id ->
                 val row = records.getConfigurationSection(id)!!
@@ -44,7 +48,7 @@ class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
         entries.values.filter { it.state == "held" }.forEach { it.state = "pending" }
         if (entries.isNotEmpty()) save()
         entries.values.filter { it.state == "withdrawing" || it.state == "depositing" }.forEach {
-            plugin.logger.severe("牌桌资金操作未确认：${it.id}，${it.playerName}，${it.amount}，${it.state}。请核对经济插件余额后处理 economy.yml，系统不会重复执行这笔操作。")
+            severe("Unconfirmed economy transaction: id=${it.id}, player=${it.playerName}, amount=${it.amount}, state=${it.state}. Check the economy provider's balance before resolving economy.yml; this transaction will not be repeated automatically.")
         }
         retry()
     }
@@ -55,18 +59,18 @@ class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
     }
 
     override fun ensureAvailable() {
-        require(provider() != null) { "这张牌桌需要 Vault 和经济插件，当前无法使用。" }
+        requireInput(provider() != null, "This table requires Vault and an available economy provider.") { "这张牌桌需要 Vault 和经济插件, 当前无法使用" }
     }
 
     fun validateAmount(amount: Double) {
-        val economy = provider() ?: throw IllegalArgumentException("未找到可用的 Vault 经济服务。")
-        require(amount.isFinite() && amount > 0) { "下注金额必须是有效的正数。" }
+        val economy = provider() ?: throw InputException("No available Vault economy provider was found.", "未找到可用的 Vault 经济服务")
+        requireInput(amount.isFinite() && amount > 0, "The bet amount must be finite and positive.") { "下注金额必须是有效的正数" }
         val digits = economy.fractionalDigits()
         if (digits >= 0) {
             try {
                 BigDecimal.valueOf(amount).setScale(digits, RoundingMode.UNNECESSARY)
             } catch (_: ArithmeticException) {
-                throw IllegalArgumentException("经济插件最多支持 $digits 位小数，请调整本桌底注。")
+                throw InputException("The economy provider supports at most $digits decimal places.", "经济插件最多支持 $digits 位小数, 请调整本桌底注")
             }
         }
     }
@@ -74,12 +78,12 @@ class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
     /** Reserve an equal upper bound from every participant before a game starts. */
     override fun reserve(roundId: String, tableId: String, players: List<Pair<UUID, String>>, amount: Double) {
         if (amount == 0.0) return
-        val economy = provider() ?: throw IllegalArgumentException("未找到可用的 Vault 经济服务。")
-        require(entries.values.none { it.roundId == roundId }) { "该局已有预扣记录，请先处理资金记录。" }
+        val economy = provider() ?: throw InputException("No available Vault economy provider was found.", "未找到可用的 Vault 经济服务")
+        requireInput(entries.values.none { it.roundId == roundId }, "This round already has escrow records; resolve them before reserving funds again.") { "该局已有预扣记录, 请先处理资金记录" }
         validateAmount(amount)
         val insufficient = players.filter { !economy.has(Bukkit.getOfflinePlayer(it.first), amount) }
-        require(insufficient.isEmpty()) {
-            "${insufficient.joinToString("、") { it.second }} 的余额不足，本桌每人需要预扣 ${format(amount)}。"
+        requireInput(insufficient.isEmpty(), "Insufficient balance for ${insufficient.joinToString(", ") { it.second }}; each player must reserve ${format(amount)}.") {
+            "${insufficient.joinToString(", ") { it.second }} 的余额不足, 本桌每人需要预扣 ${format(amount)}"
         }
         for ((playerId, playerName) in players) {
             val entry = Entry(UUID.randomUUID().toString(), roundId, tableId, playerId, playerName, amount, "withdrawing")
@@ -88,15 +92,15 @@ class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
             val result = try {
                 economy.withdrawPlayer(Bukkit.getOfflinePlayer(playerId), amount)
             } catch (error: RuntimeException) {
-                plugin.logger.severe("经济插件在预扣时抛出异常，操作结果未确认：${entry.id}，${entry.playerName}，${entry.amount}。请核对余额；${error.message}")
+                severe("Economy provider threw during withdrawal: id=${entry.id}, player=${entry.playerName}, amount=${entry.amount}. The result is unconfirmed; verify the player's balance.", error.stackTraceToString())
                 refund(roundId)
-                throw IllegalArgumentException("经济插件预扣异常，未确认的金额已记入资金记录，请联系管理员核对。", error)
+                throw InputException("The economy provider threw during withdrawal; the unconfirmed transaction has been recorded for administrator review.", "经济插件预扣异常, 未确认的金额已记入资金记录, 请联系管理员核对", error)
             }
             if (!result.transactionSuccess()) {
                 entries.remove(entry.id)
                 save()
                 refund(roundId)
-                throw IllegalArgumentException("${playerName} 的预扣失败：${result.errorMessage}。已成功预扣的玩家将退回金额。")
+                throw InputException("Withdrawal failed for $playerName: ${result.errorMessage}. Successfully reserved funds will be refunded.", "${playerName} 的预扣失败: ${result.errorMessage}. 已成功预扣的玩家将退回金额")
             }
             entry.state = "held"
             save()
@@ -106,11 +110,11 @@ class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
     /** netResults is the game result: positive for a winner and negative for a loser. */
     override fun settle(roundId: String, netResults: Map<UUID, Double>) {
         val held = entries.values.filter { it.roundId == roundId && it.state == "held" }
-        require(netResults.values.all { it.isFinite() } && netResults.values.fold(BigDecimal.ZERO) { total, amount -> total + BigDecimal.valueOf(amount) }.signum() == 0) { "结算净输赢必须为有限金额且合计为零。" }
-        if (held.isNotEmpty()) require(netResults.keys == held.map { it.playerId }.toSet()) { "结算玩家必须与本局托管玩家一致。" }
+        require(netResults.values.all { it.isFinite() } && netResults.values.fold(BigDecimal.ZERO) { total, amount -> total + BigDecimal.valueOf(amount) }.signum() == 0) { "Settlement results must be finite and sum to zero." }
+        if (held.isNotEmpty()) require(netResults.keys == held.map { it.playerId }.toSet()) { "Settlement players must match this round's escrow participants." }
         for (entry in held) {
             val returned = sum(entry.amount, netResults.getValue(entry.playerId))
-            require(returned >= 0 && returned.isFinite()) { "结算金额超出已预扣额度。" }
+            require(returned >= 0 && returned.isFinite()) { "Settlement amount exceeds the escrow reserve." }
         }
         for (entry in held) {
             entry.amount = sum(entry.amount, netResults.getValue(entry.playerId))
@@ -150,14 +154,14 @@ class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
             val result = try {
                 economy.depositPlayer(Bukkit.getOfflinePlayer(entry.playerId), entry.amount)
             } catch (error: RuntimeException) {
-                plugin.logger.severe("经济插件在退款时抛出异常，操作结果未确认：${entry.id}，${entry.playerName}，${entry.amount}。请核对余额；${error.message}")
+                severe("Economy provider threw during refund: id=${entry.id}, player=${entry.playerName}, amount=${entry.amount}. The result is unconfirmed; verify the player's balance.", error.stackTraceToString())
                 continue
             }
             if (result.transactionSuccess()) {
                 entries.remove(entry.id)
             } else {
                 entry.state = "pending"
-                plugin.logger.warning("牌桌退款暂未成功：${entry.playerName} ${entry.amount}，${result.errorMessage}。已保存待退款记录。")
+                warning("Refund failed for ${entry.playerName}, amount=${entry.amount}: ${result.errorMessage}. The pending refund record has been saved.")
             }
             save()
         }
@@ -170,8 +174,7 @@ class EconomyService(private val plugin: JavaPlugin) : GameEconomy {
     }
 
     private fun save() {
-        plugin.dataFolder.mkdirs()
-        val yaml = YamlConfiguration()
+        val yaml = Configuration.empty(concurrent = false)
         for (entry in entries.values) {
             val key = "records.${entry.id}"
             yaml.set("$key.round", entry.roundId)

@@ -2,7 +2,7 @@ package me.xiaozhangup.cardtable.game.doudizhu
 
 data class Card(val id: Int) {
     init {
-        require(id in 0..53) { "牌编号必须为 0..53" }
+        require(id in 0..53) { "Dou Dizhu card ID must be between 0 and 53" }
     }
 
     val rank: Int get() = if (id < 52) id % 13 + 3 else id - 36

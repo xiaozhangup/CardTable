@@ -1,0 +1,964 @@
+{
+  "voice.female.single_3": {
+    "subtitle": "subtitles.doudizhu.female.single_3",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_3",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_4": {
+    "subtitle": "subtitles.doudizhu.female.single_4",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_4",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_5": {
+    "subtitle": "subtitles.doudizhu.female.single_5",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_5",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_6": {
+    "subtitle": "subtitles.doudizhu.female.single_6",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_6",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_7": {
+    "subtitle": "subtitles.doudizhu.female.single_7",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_7",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_8": {
+    "subtitle": "subtitles.doudizhu.female.single_8",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_8",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_9": {
+    "subtitle": "subtitles.doudizhu.female.single_9",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_9",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_10": {
+    "subtitle": "subtitles.doudizhu.female.single_10",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_10",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_11": {
+    "subtitle": "subtitles.doudizhu.female.single_11",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_11",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_12": {
+    "subtitle": "subtitles.doudizhu.female.single_12",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_12",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_13": {
+    "subtitle": "subtitles.doudizhu.female.single_13",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_13",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_14": {
+    "subtitle": "subtitles.doudizhu.female.single_14",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_14",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_15": {
+    "subtitle": "subtitles.doudizhu.female.single_15",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_15",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_16": {
+    "subtitle": "subtitles.doudizhu.female.single_16",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_16",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.single_17": {
+    "subtitle": "subtitles.doudizhu.female.single_17",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/single_17",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_3": {
+    "subtitle": "subtitles.doudizhu.female.pair_3",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_3",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_3": {
+    "subtitle": "subtitles.doudizhu.female.triple_3",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_3",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_4": {
+    "subtitle": "subtitles.doudizhu.female.pair_4",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_4",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_4": {
+    "subtitle": "subtitles.doudizhu.female.triple_4",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_4",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_5": {
+    "subtitle": "subtitles.doudizhu.female.pair_5",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_5",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_5": {
+    "subtitle": "subtitles.doudizhu.female.triple_5",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_5",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_6": {
+    "subtitle": "subtitles.doudizhu.female.pair_6",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_6",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_6": {
+    "subtitle": "subtitles.doudizhu.female.triple_6",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_6",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_7": {
+    "subtitle": "subtitles.doudizhu.female.pair_7",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_7",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_7": {
+    "subtitle": "subtitles.doudizhu.female.triple_7",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_7",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_8": {
+    "subtitle": "subtitles.doudizhu.female.pair_8",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_8",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_8": {
+    "subtitle": "subtitles.doudizhu.female.triple_8",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_8",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_9": {
+    "subtitle": "subtitles.doudizhu.female.pair_9",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_9",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_9": {
+    "subtitle": "subtitles.doudizhu.female.triple_9",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_9",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_10": {
+    "subtitle": "subtitles.doudizhu.female.pair_10",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_10",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_10": {
+    "subtitle": "subtitles.doudizhu.female.triple_10",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_10",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_11": {
+    "subtitle": "subtitles.doudizhu.female.pair_11",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_11",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_11": {
+    "subtitle": "subtitles.doudizhu.female.triple_11",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_11",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_12": {
+    "subtitle": "subtitles.doudizhu.female.pair_12",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_12",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_12": {
+    "subtitle": "subtitles.doudizhu.female.triple_12",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_12",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_13": {
+    "subtitle": "subtitles.doudizhu.female.pair_13",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_13",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_13": {
+    "subtitle": "subtitles.doudizhu.female.triple_13",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_13",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_14": {
+    "subtitle": "subtitles.doudizhu.female.pair_14",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_14",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_14": {
+    "subtitle": "subtitles.doudizhu.female.triple_14",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_14",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_15": {
+    "subtitle": "subtitles.doudizhu.female.pair_15",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_15",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_15": {
+    "subtitle": "subtitles.doudizhu.female.triple_15",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_15",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_single": {
+    "subtitle": "subtitles.doudizhu.female.triple_single",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_single",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.triple_pair": {
+    "subtitle": "subtitles.doudizhu.female.triple_pair",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/triple_pair",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.straight": {
+    "subtitle": "subtitles.doudizhu.female.straight",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/straight",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pair_straight": {
+    "subtitle": "subtitles.doudizhu.female.pair_straight",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pair_straight",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.airplane": {
+    "subtitle": "subtitles.doudizhu.female.airplane",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/airplane",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.four_single": {
+    "subtitle": "subtitles.doudizhu.female.four_single",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/four_single",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.four_pair": {
+    "subtitle": "subtitles.doudizhu.female.four_pair",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/four_pair",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.bomb": {
+    "subtitle": "subtitles.doudizhu.female.bomb",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/bomb",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.rocket": {
+    "subtitle": "subtitles.doudizhu.female.rocket",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/rocket",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.bid_0": {
+    "subtitle": "subtitles.doudizhu.female.bid_0",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/bid_0",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.bid_call": {
+    "subtitle": "subtitles.doudizhu.female.bid_call",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/bid_call",
+        "stream": false
+      }
+    ]
+  },
+  "voice.female.pass": {
+    "subtitle": "subtitles.doudizhu.female.pass",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/female/pass_buyao",
+        "stream": false
+      },
+      {
+        "name": "doudizhu:voice/female/pass_guo",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_3": {
+    "subtitle": "subtitles.doudizhu.male.single_3",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_3",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_4": {
+    "subtitle": "subtitles.doudizhu.male.single_4",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_4",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_5": {
+    "subtitle": "subtitles.doudizhu.male.single_5",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_5",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_6": {
+    "subtitle": "subtitles.doudizhu.male.single_6",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_6",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_7": {
+    "subtitle": "subtitles.doudizhu.male.single_7",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_7",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_8": {
+    "subtitle": "subtitles.doudizhu.male.single_8",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_8",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_9": {
+    "subtitle": "subtitles.doudizhu.male.single_9",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_9",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_10": {
+    "subtitle": "subtitles.doudizhu.male.single_10",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_10",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_11": {
+    "subtitle": "subtitles.doudizhu.male.single_11",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_11",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_12": {
+    "subtitle": "subtitles.doudizhu.male.single_12",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_12",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_13": {
+    "subtitle": "subtitles.doudizhu.male.single_13",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_13",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_14": {
+    "subtitle": "subtitles.doudizhu.male.single_14",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_14",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_15": {
+    "subtitle": "subtitles.doudizhu.male.single_15",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_15",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_16": {
+    "subtitle": "subtitles.doudizhu.male.single_16",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_16",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.single_17": {
+    "subtitle": "subtitles.doudizhu.male.single_17",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/single_17",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_3": {
+    "subtitle": "subtitles.doudizhu.male.pair_3",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_3",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_3": {
+    "subtitle": "subtitles.doudizhu.male.triple_3",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_3",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_4": {
+    "subtitle": "subtitles.doudizhu.male.pair_4",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_4",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_4": {
+    "subtitle": "subtitles.doudizhu.male.triple_4",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_4",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_5": {
+    "subtitle": "subtitles.doudizhu.male.pair_5",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_5",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_5": {
+    "subtitle": "subtitles.doudizhu.male.triple_5",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_5",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_6": {
+    "subtitle": "subtitles.doudizhu.male.pair_6",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_6",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_6": {
+    "subtitle": "subtitles.doudizhu.male.triple_6",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_6",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_7": {
+    "subtitle": "subtitles.doudizhu.male.pair_7",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_7",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_7": {
+    "subtitle": "subtitles.doudizhu.male.triple_7",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_7",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_8": {
+    "subtitle": "subtitles.doudizhu.male.pair_8",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_8",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_8": {
+    "subtitle": "subtitles.doudizhu.male.triple_8",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_8",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_9": {
+    "subtitle": "subtitles.doudizhu.male.pair_9",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_9",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_9": {
+    "subtitle": "subtitles.doudizhu.male.triple_9",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_9",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_10": {
+    "subtitle": "subtitles.doudizhu.male.pair_10",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_10",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_10": {
+    "subtitle": "subtitles.doudizhu.male.triple_10",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_10",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_11": {
+    "subtitle": "subtitles.doudizhu.male.pair_11",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_11",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_11": {
+    "subtitle": "subtitles.doudizhu.male.triple_11",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_11",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_12": {
+    "subtitle": "subtitles.doudizhu.male.pair_12",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_12",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_12": {
+    "subtitle": "subtitles.doudizhu.male.triple_12",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_12",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_13": {
+    "subtitle": "subtitles.doudizhu.male.pair_13",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_13",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_13": {
+    "subtitle": "subtitles.doudizhu.male.triple_13",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_13",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_14": {
+    "subtitle": "subtitles.doudizhu.male.pair_14",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_14",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_14": {
+    "subtitle": "subtitles.doudizhu.male.triple_14",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_14",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_15": {
+    "subtitle": "subtitles.doudizhu.male.pair_15",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_15",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_15": {
+    "subtitle": "subtitles.doudizhu.male.triple_15",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_15",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_single": {
+    "subtitle": "subtitles.doudizhu.male.triple_single",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_single",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.triple_pair": {
+    "subtitle": "subtitles.doudizhu.male.triple_pair",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/triple_pair",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.straight": {
+    "subtitle": "subtitles.doudizhu.male.straight",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/straight",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pair_straight": {
+    "subtitle": "subtitles.doudizhu.male.pair_straight",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pair_straight",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.airplane": {
+    "subtitle": "subtitles.doudizhu.male.airplane",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/airplane",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.four_single": {
+    "subtitle": "subtitles.doudizhu.male.four_single",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/four_single",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.four_pair": {
+    "subtitle": "subtitles.doudizhu.male.four_pair",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/four_pair",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.bomb": {
+    "subtitle": "subtitles.doudizhu.male.bomb",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/bomb",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.rocket": {
+    "subtitle": "subtitles.doudizhu.male.rocket",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/rocket",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.bid_0": {
+    "subtitle": "subtitles.doudizhu.male.bid_0",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/bid_0",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.bid_call": {
+    "subtitle": "subtitles.doudizhu.male.bid_call",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/bid_call",
+        "stream": false
+      }
+    ]
+  },
+  "voice.male.pass": {
+    "subtitle": "subtitles.doudizhu.male.pass",
+    "sounds": [
+      {
+        "name": "doudizhu:voice/male/pass_buyao",
+        "stream": false
+      },
+      {
+        "name": "doudizhu:voice/male/pass_guo",
+        "stream": false
+      }
+    ]
+  }
+}

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Generate original pixel colour cards, GUI symbols and CraftEngine models.
+"""Generate original pixel colour cards, tabletop buttons and CraftEngine models.
 
-Only craftengine/uno and uno-assets-preview.png are written. Art is drawn from
-integer pixel shapes and bitmap glyphs; no existing image is sampled or edited.
+Writes UNO assets, configuration and metadata inside the shared craftengine/cardtable
+pack, plus build/previews/uno-assets-preview.png. Art is drawn from integer pixel shapes and bitmap
+glyphs; no existing image is sampled or edited.
 """
 from __future__ import annotations
 
@@ -11,10 +12,10 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 import yaml
-from build_assets import bitmap, pixel_text, mini_text, label, gui_model, context_model
+from build_assets import bitmap, pixel_text, mini_text, label
 
 ROOT = Path(__file__).resolve().parent.parent
-PACK = ROOT / "craftengine" / "uno"
+PACK = ROOT / "craftengine" / "cardtable"
 ASSETS = PACK / "resourcepack" / "assets" / "uno"
 SKINS = {
     "classic": {"name": "经典", "paper": "#fff9ea", "edge": "#b8b4a6", "back": "#243b58"},
@@ -78,30 +79,20 @@ def corner(draw, value, color):
         draw_value(draw, 3, 4, value, color)
 
 
-def draw_colored(skin_name, color_name, value, gui=False):
+def draw_colored(skin_name, color_name, value):
     color = COLORS[color_name]
-    image = base(skin_name, (16, 16) if gui else (32, 48), color["fill"])
+    image = base(skin_name, fill=color["fill"])
     draw = ImageDraw.Draw(image)
-    if gui:
-        if value == "reverse":
-            bitmap(draw, 3, 1, REVERSE, color["ink"], 2)
-        elif value == "skip":
-            bitmap(draw, 2, 2, SKIP, color["ink"], 2)
-        elif value == "draw_two":
-            mini_text(draw, 1, 3, "+2", color["ink"], 2)
-        else:
-            mini_text(draw, 8, 3, value, color["ink"], 2, centered=True)
+    corner(draw, value, color["ink"])
+    mini_text(draw, 3, 19, color["letter"], color["ink"], 2)
+    if value.isdigit():
+        pixel_text(draw, 22, 28, value, color["ink"], 2)
+    elif value == "draw_two":
+        mini_text(draw, 14, 31, "+2", color["ink"], 2)
+    elif value == "skip":
+        bitmap(draw, 16, 31, SKIP, color["ink"], 2)
     else:
-        corner(draw, value, color["ink"])
-        mini_text(draw, 3, 19, color["letter"], color["ink"], 2)
-        if value.isdigit():
-            pixel_text(draw, 22, 28, value, color["ink"], 2)
-        elif value == "draw_two":
-            mini_text(draw, 14, 31, "+2", color["ink"], 2)
-        elif value == "skip":
-            bitmap(draw, 16, 31, SKIP, color["ink"], 2)
-        else:
-            bitmap(draw, 16, 28, REVERSE, color["ink"], 2)
+        bitmap(draw, 16, 28, REVERSE, color["ink"], 2)
     return image
 
 
@@ -112,36 +103,24 @@ def four_colors(draw, left, top, size):
         draw.rectangle((x, y, x + size - 1, y + size - 1), fill=color["fill"])
 
 
-def draw_wild(skin_name, draw_four=False, gui=False):
-    image = base(skin_name, (16, 16) if gui else (32, 48), INK)
+def draw_wild(skin_name, draw_four=False):
+    image = base(skin_name, fill=INK)
     draw = ImageDraw.Draw(image)
-    if gui:
-        four_colors(draw, 2, 2, 6)
-        if draw_four:
-            draw.rectangle((3, 5, 12, 11), fill=INK)
-            mini_text(draw, 8, 6, "+4", WHITE, centered=True)
-        else:
-            draw.rectangle((4, 2, 11, 13), fill=INK)
-            pixel_text(draw, 8, 4, "W", WHITE, centered=True)
-    else:
-        corner(draw, "wild_draw_four" if draw_four else "W", WHITE)
-        four_colors(draw, 3, 19, 5)
-        four_colors(draw, 13, 30, 8)
+    corner(draw, "wild_draw_four" if draw_four else "W", WHITE)
+    four_colors(draw, 3, 19, 5)
+    four_colors(draw, 13, 30, 8)
     return image
 
 
-def draw_back(skin_name, gui=False):
+def draw_back(skin_name):
     skin = SKINS[skin_name]
-    image = base(skin_name, (16, 16) if gui else (32, 48))
+    image = base(skin_name)
     draw = ImageDraw.Draw(image)
-    if gui:
-        four_colors(draw, 4, 4, 4)
-    else:
-        for y in range(7, 43, 6):
-            for x in range(6 + (3 if y % 12 else 0), 28, 6):
-                draw.rectangle((x, y, x, y), fill=skin["edge"])
-        draw.rectangle((7, 15, 24, 32), fill=skin["back"])
-        four_colors(draw, 8, 16, 8)
+    for y in range(7, 43, 6):
+        for x in range(6 + (3 if y % 12 else 0), 28, 6):
+            draw.rectangle((x, y, x, y), fill=skin["edge"])
+    draw.rectangle((7, 15, 24, 32), fill=skin["back"])
+    four_colors(draw, 8, 16, 8)
     return image
 
 
@@ -191,10 +170,10 @@ def save_json(path, value):
 
 
 def preview(images):
-    image = Image.new("RGB", (1920, 1390), "#14231f")
+    image = Image.new("RGB", (1920, 1224), "#14231f")
     draw = ImageDraw.Draw(image)
     label(draw, (60, 44), "UNO 像素牌 · 大色块、大牌值与完整露出的角标", 34, "#f2eedf", True, "lm")
-    label(draw, (60, 90), "世界纸牌 32 × 48 · 独立菜单符号 16 × 16 · 浅纸边 · 以下放大均为最近邻", 24, "#adc9bd", True, "lm")
+    label(draw, (60, 90), "世界纸牌 32 × 48 · 桌面操作图标 16 × 16 · 浅纸边 · 以下放大均为最近邻", 24, "#adc9bd", True, "lm")
     samples = ["red_0", "yellow_7", "green_skip", "blue_reverse", "red_draw_two", "wild", "wild_draw_four", "back"]
     for row, skin_name in enumerate(SKINS):
         y = 132 + row * 248
@@ -202,23 +181,21 @@ def preview(images):
         for index, asset in enumerate(samples):
             thumb = images[f"{skin_name}_{asset}"].resize((128, 192), Image.Resampling.NEAREST)
             image.paste(thumb, (60 + index * 225, y + 24), thumb)
-    label(draw, (60, 644), "菜单图标 · 16 × 16 方形符号", 24, "#f2eedf", True, "lm")
-    for index, asset in enumerate(samples):
-        thumb = images[f"classic_{asset}_gui"].resize((96, 96), Image.Resampling.NEAREST)
-        image.paste(thumb, (60 + index * 225, 677), thumb)
-    label(draw, (60, 810), "操作按钮 · 摸牌 / UNO / 抓漏喊 / 质疑 / 接受 / 四色选择", 24, "#f2eedf", True, "lm")
+    label(draw, (60, 644), "桌面操作按钮 · 摸牌 / UNO / 抓漏喊 / 质疑 / 接受 / 四色选择", 24, "#f2eedf", True, "lm")
     for index, action in enumerate(BUTTONS):
         thumb = images[f"classic_button_{action}"].resize((64, 64), Image.Resampling.NEAREST)
-        image.paste(thumb, (60 + index * 155, 844), thumb)
-    label(draw, (60, 958), "两排各 10 张 · 遮挡约 52% 后，左侧牌值与色字仍完整露出", 24, "#f2eedf", True, "lm")
+        image.paste(thumb, (60 + index * 155, 678), thumb)
+    label(draw, (60, 792), "牌面重叠示意 · 遮挡约 52% 后，左侧牌值与色字仍完整露出", 24, "#f2eedf", True, "lm")
     fan_samples = ["red_0", "red_1", "red_2", "yellow_7", "yellow_draw_two", "green_skip", "green_3", "blue_reverse", "wild", "wild_draw_four"]
     for column, skin_name in enumerate(SKINS):
         for row in range(2):
             for index, asset in enumerate(fan_samples):
                 thumb = images[f"{skin_name}_{asset}"].resize((96, 144), Image.Resampling.NEAREST)
-                image.paste(thumb, (60 + column * 940 + index * 46, 1000 + row * 155), thumb)
-    label(draw, (60, 1340), "整数像素与有限色板 · 无小英文、金框、渐变或抗锯齿 · GUI 使用独立生成模型", 23, "#adc9bd", True, "lm")
-    image.save(ROOT / "uno-assets-preview.png")
+                image.paste(thumb, (60 + column * 940 + index * 46, 834 + row * 155), thumb)
+    label(draw, (60, 1174), "整数像素与有限色板 · 无小英文、金框、渐变或抗锯齿", 23, "#adc9bd", True, "lm")
+    preview_dir = ROOT / "build" / "previews"
+    preview_dir.mkdir(parents=True, exist_ok=True)
+    image.save(preview_dir / "uno-assets-preview.png")
 
 
 def main():
@@ -229,38 +206,36 @@ def main():
         directory.mkdir(parents=True, exist_ok=True)
     items, images = {}, {}
 
-    def item(skin_name, suffix, image, gui_image, display_name, button=False):
+    def item(skin_name, suffix, image, display_name, button=False):
         asset = f"{skin_name}_{suffix}"
-        images[asset], images[asset + "_gui"] = image, gui_image
+        images[asset] = image
         image.save(textures / f"{asset}.png")
-        gui_image.save(textures / f"{asset}_gui.png")
         save_json(models / f"{asset}.json", model(asset, asset if button else f"{skin_name}_back", button))
-        save_json(models / f"{asset}_gui.json", gui_model("uno", asset))
         # Existing doudizhu skin aliases are retained; artwork lives in uno.
         item_id = f"doudizhu:{skin_name}_uno_{suffix}"
         items[item_id] = {"material": "paper", "data": {"item_name": "<!i><white>" + display_name},
-            "model": context_model("uno", asset)}
+            "model": {"type": "minecraft:model", "path": f"uno:item/{asset}"}}
 
     for skin_name in SKINS:
         for color_name, color in COLORS.items():
             for value in VALUES:
                 item(skin_name, f"{color_name}_{value}", draw_colored(skin_name, color_name, value),
-                    draw_colored(skin_name, color_name, value, gui=True), f"{color['name']}色 {VALUE_NAMES.get(value, value)}")
-        item(skin_name, "wild", draw_wild(skin_name), draw_wild(skin_name, gui=True), "变色牌")
-        item(skin_name, "wild_draw_four", draw_wild(skin_name, True), draw_wild(skin_name, True, gui=True), "变色加四")
-        item(skin_name, "back", draw_back(skin_name), draw_back(skin_name, gui=True), SKINS[skin_name]["name"] + "四色牌背")
+                    f"{color['name']}色 {VALUE_NAMES.get(value, value)}")
+        item(skin_name, "wild", draw_wild(skin_name), "变色牌")
+        item(skin_name, "wild_draw_four", draw_wild(skin_name, True), "变色加四")
+        item(skin_name, "back", draw_back(skin_name), SKINS[skin_name]["name"] + "四色牌背")
         for action, (title, _) in BUTTONS.items():
-            item(skin_name, "button_" + action, draw_button(skin_name, action), draw_button(skin_name, action), title, button=True)
+            item(skin_name, "button_" + action, draw_button(skin_name, action), title, button=True)
     Image.new("RGBA", (16, 16), SKINS["classic"]["paper"]).save(textures / "card_edge.png")
-    (configuration / "items.yml").write_text(yaml.safe_dump({"items": items}, allow_unicode=True, sort_keys=False), encoding="utf-8")
-    (PACK / "pack.yml").write_text(yaml.safe_dump({"author": "CardTable original pixel assets", "namespace": "uno", "description": "原创 Minecraft 像素四色牌，32x48世界牌与16x16独立菜单图标", "version": "2.0.0"}, allow_unicode=True, sort_keys=False), encoding="utf-8")
-    save_json(PACK / "metadata.json", {"item_ids": list(items), "skins": list(SKINS), "colors": list(COLORS), "face_types_per_skin": 54,
-        "card_size_pixels": [32, 48], "gui_size_pixels": [16, 16], "button_size_pixels": [16, 16],
+    (configuration / "uno.yml").write_text(yaml.safe_dump({"items": items}, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    # The shared pack.yml is maintained with the combined pack, not by either card generator.
+    save_json(PACK / "metadata" / "uno.json", {"item_ids": list(items), "skins": list(SKINS), "colors": list(COLORS), "face_types_per_skin": 54,
+        "card_size_pixels": [32, 48], "button_size_pixels": [16, 16],
         "card_geometry": {"front": "north / local -Z", "width_blocks": .625, "height_blocks": .9375, "thickness_blocks": .00375, "fixed_transform": "identity", "corner_max_x_pixel": 13, "corner_order": "value above color letter"},
-        "button_geometry": {"width_blocks": 1, "height_blocks": 1}, "gui_model": "minecraft:item/generated, selected by minecraft:display_context == gui",
+        "button_geometry": {"width_blocks": 1, "height_blocks": 1},
         "art": "Original integer pixel shapes and bitmap glyphs; no sampled images, commercial card artwork or UNO logo"})
     preview(images)
-    print(f"Generated {len(items)} CE items, {len(images) + 1} original pixel textures and {len(items) * 2} models.")
+    print(f"Generated {len(items)} CE items, {len(images) + 1} original pixel textures and {len(items)} models.")
 
 
 if __name__ == "__main__":

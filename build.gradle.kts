@@ -1,10 +1,11 @@
 plugins {
     kotlin("jvm") version "2.3.20"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.23"
     `maven-publish`
 }
 
 group = "me.xiaozhangup.cardtable"
-version = "1.3.15"
+version = "1.3.45"
 
 repositories {
     mavenLocal()
@@ -21,7 +22,7 @@ kotlin {
 }
 
 dependencies {
-    compileOnly("me.xiaozhangup.octopus:octopus-api:26.3-R0.1-SNAPSHOT")
+    paperweight.devBundle("me.xiaozhangup.octopus", "26.3-R0.1-SNAPSHOT")
     compileOnly("me.xiaozhangup.crab:CrabKotlin:2.3.20:paper")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1") { isTransitive = false }
     compileOnly("net.momirealms:craft-engine-bukkit:26.9.1") { isTransitive = false }
@@ -30,10 +31,9 @@ dependencies {
 }
 
 tasks.processResources {
-    from("craftengine/doudizhu/music.yml")
+    from("craftengine/cardtable/music.yml")
     inputs.property("version", project.version)
     filesMatching("plugin.yml") { expand("version" to project.version) }
-    from("ai") { include("bridge.py", "requirements.txt"); into("ai") }
     from("THIRD_PARTY_NOTICES.md") { into("META-INF") }
 }
 
@@ -51,7 +51,8 @@ val craftEnginePack = tasks.register<Zip>("craftEnginePack") {
 val aiBundle = tasks.register<Zip>("aiBundle") {
     archiveBaseName.set("CardTable-AI")
     destinationDirectory.set(layout.buildDirectory.dir("distributions"))
-    from("ai") { include("bridge.py", "requirements.txt", "README.md") }
+    from("src/main/resources/ai")
+    from("docs/AI_RUNTIME.md") { rename { "README.md" } }
     from("THIRD_PARTY_NOTICES.md")
 }
 tasks.assemble { dependsOn(apiJar, craftEnginePack, aiBundle) }

@@ -1,0 +1,25 @@
+Dou Dizhu voice recordings used by CardTable
+
+Source repository: https://github.com/palemoky/fight-the-landlord
+Pinned commit: 6a2b07bd71a21e0c564277a235846e7f3cf589b1
+Original paths: internal/sound/gaming/voices/female/ and internal/sound/gaming/voices/male/
+Source tree: https://github.com/palemoky/fight-the-landlord/tree/6a2b07bd71a21e0c564277a235846e7f3cf589b1/internal/sound/gaming/voices
+
+The upstream repository contains the GNU General Public License version 3.
+Its complete, unmodified license is included as LICENSE.txt. No separate audio
+license, original recording author, or recording-specific authorization was
+confirmed. The repository license alone does not establish that provenance.
+CardTable does not claim authorship of these recordings or confirmed original
+audio rights.
+
+CardTable adaptation date: 2026-10-05
+CardTable modifications: Downmix to mono, apply one constant gain toward the target peak (boost limited to 6 dB), resample to 44.1 kHz, and encode Vorbis. No denoising, equalization, or dynamic compression.
+Event names were adapted to CardTable. Subtitles describe the game event using
+the upstream sound mapping and original Chinese filenames; they are not verified
+word-for-word transcripts. No upstream application source code is included.
+
+SOURCE-MANIFEST.json lists every original file, source URL base, original SHA-256,
+and conversion settings. The unmodified source MP3s are included in the CardTable
+CraftEngine distribution under sources/fight-the-landlord/, outside resourcepack/.
+They can also be retrieved from the pinned raw URLs recorded in the manifest.
+Rebuild command from the CardTable project: python3 tools/import_doudizhu_voices.py

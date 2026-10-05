@@ -33,7 +33,7 @@ enum class UnoValue(val assetName: String, val label: String, val number: Int? =
 /** 每张实体牌拥有唯一编号；相同牌面也能分别选择、抽取和弃置。 */
 data class UnoCard(val id: Int) {
     init {
-        require(id in 0..107) { "UNO 牌编号必须为 0..107" }
+        require(id in 0..107) { "UNO card ID must be between 0 and 107" }
     }
 
     val color: UnoColor? get() = if (id < 100) UnoColor.entries[id / 25] else null

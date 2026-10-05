@@ -1,6 +1,8 @@
 package me.xiaozhangup.cardtable.table
 
 import me.xiaozhangup.cardtable.CardTablePlugin
+import me.xiaozhangup.cardtable.util.InputException
+import me.xiaozhangup.cardtable.util.requireInput
 import me.xiaozhangup.cardtable.api.*
 import me.xiaozhangup.cardtable.ui.TableLayout
 import org.bukkit.Bukkit
@@ -16,8 +18,8 @@ class CardTableService(private val plugin: CardTablePlugin) : GameRegistry {
     override val providers: Collection<GameProvider> get() = registered.values.toList()
 
     override fun register(provider: GameProvider, owner: Plugin) {
-        require(provider.id.matches(Regex("[a-z0-9_-]+"))) { "游戏ID格式无效。" }
-        require(provider.id !in registered) { "游戏 ${provider.id} 已注册。" }
+        require(provider.id.matches(Regex("[a-z0-9_-]+"))) { "Invalid game ID: ${provider.id}." }
+        require(provider.id !in registered) { "Game ${provider.id} is already registered." }
         registered[provider.id] = provider
         owners[provider.id] = owner
     }
@@ -31,41 +33,48 @@ class CardTableService(private val plugin: CardTablePlugin) : GameRegistry {
     fun unregisterOwnedBy(owner: Plugin) { owners.filterValues { it == owner }.keys.toList().forEach(::unregister) }
 
     override fun provider(id: String): GameProvider? = registered[id]
-    fun room(id: String): GameSession = rooms[id] ?: throw IllegalArgumentException("找不到牌桌 $id。")
+    fun room(id: String): GameSession = rooms[id] ?: throw InputException("Table $id was not found.", "找不到牌桌 $id")
     fun tableOf(playerId: UUID): GameSession? = rooms.values.firstOrNull { room -> room.participants.any { it.id == playerId } }
 
     fun add(table: TableConfig) {
         TableStorage.validateId(table.id)
-        require(table.id !in rooms) { "牌桌 ${table.id} 已存在。" }
-        val provider = provider(table.game) ?: throw IllegalArgumentException("游戏 ${table.game} 尚未注册。")
+        requireInput(table.id !in rooms, "Table ${table.id} already exists.") { "牌桌 ${table.id} 已存在" }
+        val provider = provider(table.game) ?: throw InputException("Game ${table.game} is not registered.", "游戏 ${table.game} 尚未注册")
         provider.validate(table)
         val context = GameContext(plugin, plugin.economy, plugin.settings.maxMultiplier,
             changed = { changed(table.id) }, broadcast = { broadcast(table.id, it) }, voice = { plugin.audio.voice(table.id, it) }, botAI = plugin.botAI)
         val session = provider.create(context, table)
-        require(rooms.values.none { other ->
+        requireInput(rooms.values.none { other ->
             val clearance = TableLayout.radius(session.seatCount) + TableLayout.radius(other.seatCount) + 0.8
             other.table.center.world == table.center.world && other.table.center.distanceSquared(table.center) < clearance * clearance
-        }) { "与另一张牌桌太近，请为桌椅和出入通道留出空间 (普通桌至少间隔 6.4 格)。" }
+        }, "Table ${table.id} overlaps another table; leave enough clearance between tables.") { "与另一张牌桌太近, 请为桌椅和出入通道留出空间 (普通桌至少间隔 6.4 格)" }
         rooms[table.id] = session
         plugin.renderer.add(session)
         changed(table.id)
     }
 
     fun join(player: Player, id: String) {
-        require(player.hasPermission("cardtable.play")) { "你没有游玩牌桌的权限。" }
-        require(tableOf(player.uniqueId) == null) { "请先离开当前牌桌。" }
+        require(player.hasPermission("cardtable.play")) { "你没有游玩牌桌的权限" }
+        require(tableOf(player.uniqueId) == null) { "请先离开当前牌桌" }
         val room = room(id)
-        require(player.world == room.table.center.world && player.location.distanceSquared(room.table.center) <= plugin.settings.maxDistance * plugin.settings.maxDistance) { "请走到牌桌附近再入座。" }
-        room.join(player)
-        val participant = room.participants.first { it.id == player.uniqueId }
-        try {
-            plugin.seating.join(player, room.table, participant.seat, room.seatCount)
-        } catch (error: IllegalArgumentException) {
-            room.leave(player)
-            throw error
+        require(player.world == room.table.center.world && player.location.distanceSquared(room.table.center) <= plugin.settings.maxDistance * plugin.settings.maxDistance) { "请走到牌桌附近再入座" }
+        if (room is TablePlayerJoin) {
+            room.join(player) { participant ->
+                plugin.seating.join(player, room.table, participant.seat, room.seatCount)
+            }
+        } else {
+            room.join(player)
+            val participant = room.participants.first { it.id == player.uniqueId }
+            try {
+                plugin.seating.join(player, room.table, participant.seat, room.seatCount)
+            } catch (error: IllegalArgumentException) {
+                room.leave(player)
+                throw error
+            }
         }
         plugin.menus.close(player)
-        plugin.tell(player, "已入座 ${room.table.id}。右键手牌选中，轮到你时再次右键已选牌即可出牌；左键取消选择。其他操作点全息按钮，Shift 离桌。")
+        changed(room.table.id)
+        plugin.tell(player, "已入座 ${room.table.id}. 右键手牌选中, 轮到你时再次右键已选牌即可出牌; 左键取消选择. 其他操作点全息按钮, Shift 离桌")
     }
 
     fun leave(player: Player) {
@@ -77,31 +86,30 @@ class CardTableService(private val plugin: CardTablePlugin) : GameRegistry {
     }
 
     fun act(player: Player, action: String, argument: String? = null) {
-        val room = tableOf(player.uniqueId) ?: throw IllegalArgumentException("请先加入牌桌。")
+        val room = tableOf(player.uniqueId) ?: throw IllegalArgumentException("请先加入牌桌")
         room.act(player, action, argument)
     }
 
     fun bots(player: Player, action: String) {
-        val room = tableOf(player.uniqueId) ?: throw IllegalArgumentException("请先加入牌桌。")
-        require(room.supportsBots) { "这个游戏尚未支持人机。" }
-        require(!room.active) { "请等本局结束后调整人机席位。" }
+        val room = tableOf(player.uniqueId) ?: throw IllegalArgumentException("请先加入牌桌")
+        require(room.supportsBots) { "这个游戏尚未支持机器人" }
+        require(!room.active) { "请等本局结束后调整机器人席位" }
         when (action) {
             "add", "fill" -> {
-                require(room.table.bet == 0.0) { "人机只支持免费桌，请先将底注设为0。" }
-                require(plugin.botAI.available) { "外部 AI 尚未就绪，请检查 ai.command 配置及 AI 程序日志。" }
+                require(room.table.bet == 0.0) { "机器人只支持免费桌, 请先将底注设为0" }
+                require(plugin.botAI.available) { plugin.botAI.unavailableReason }
                 val empty = room.seatCount - room.participants.size
-                require(empty > 0) { "这张牌桌已经坐满了。" }
-                repeat(if (action == "fill") empty else 1) {
-                    val seat = (0 until room.seatCount).first { index -> room.participants.none { it.seat == index } }
-                    room.addBot(UUID.randomUUID(), "牌友${seat + 1}")
+                require(empty > 0) { "这张牌桌已经坐满了" }
+                plugin.botNames.pick(room.participants, if (action == "fill") empty else 1).forEach { name ->
+                    room.addBot(UUID.randomUUID(), name)
                 }
             }
             "remove" -> {
-                val bot = room.participants.lastOrNull { it.bot } ?: throw IllegalArgumentException("这张牌桌没有人机。")
+                val bot = room.participants.lastOrNull { it.bot } ?: throw IllegalArgumentException("这张牌桌没有机器人")
                 room.removeBot(bot.id)
             }
             "clear" -> room.participants.filter { it.bot }.forEach { room.removeBot(it.id) }
-            else -> throw IllegalArgumentException("使用 /ct bot add|fill|remove|clear。")
+            else -> throw IllegalArgumentException("使用 /ct bot add|fill|remove|clear")
         }
         changed(room.table.id)
     }

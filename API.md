@@ -2,7 +2,7 @@
 
 公共层负责牌桌位置、加入距离与权限、实体显示、菜单、皮肤、座椅、声音和资金托管。内置斗地主和 UNO 的手牌、轮次、操作、处罚和胜负完全由各自的 `GameSession` 管理。UNO 通过同一个 `GameProvider` 注册，只依赖 `GameContext`，没有强转主插件实例；新增游戏无需修改既有玩法。
 
-扩展插件声明 `depend: [CrabKotlin, CardTable]`，编译依赖 `me.xiaozhangup.cardtable:CardTable:1.3.10:api`，另外使用 CrabKotlin 和 Paper 的 compileOnly API。运行时不要将 CardTable API 或 Kotlin 打包进扩展插件。
+扩展插件声明 `depend: [CrabKotlin, CardTable]`，编译依赖 `me.xiaozhangup.cardtable:CardTable:1.3.39:api`，另外使用 CrabKotlin 和 Paper 的 compileOnly API。运行时不要将 CardTable API 或 Kotlin 打包进扩展插件。
 
 在扩展插件的 `enable()` 中，通过 Bukkit 服务取得 `GameRegistry`，注册自己的 `GameProvider`，并传入插件实例作为 owner：
 
@@ -17,8 +17,9 @@ registry.register(myProvider, this)
 | --- | --- |
 | `GameProvider` | 唯一 id、中文名称、validate 配置、为每张桌 create 独立 session |
 | `GameSession` | seatCount、participants、active、join/leave/act、view、tick、close |
-| `TableCardPile` | 可选接口，tableCards 返回按旧到新排列的公开桌面牌堆；最后一张位于顶层 |
-| `TableTurnOrder` / `TurnDirection` | 可选接口，turnDirection 返回从桌面正上方观察的规则方向；等待或无方向时返回 null |
+| `TablePlayerJoin` | 可选接口，join(player, prepareSeat) 在原生坐下成功后再提交新参与者，支持安全替换等待中的机器人 |
+| `TableCardPile` / `TablePileLayout` | 可选接口，tableCards 返回按旧到新排列的公开桌面牌堆；tablePileLayout 选择紧凑叠放或中央散放 |
+| `TableTurnOrder` / `TurnDirection` / `TurnDirectionPlacement` | 可选接口，turnDirection 返回从桌面正上方观察的规则方向；等待或无方向时返回 null |
 | `TablePlayEvents` / `TablePlay` | 可选接口，lastTablePlay 返回最近一次成功公开出牌的 sequence、物理 seat 与 cards |
 | `TableSkipEvents` / `TableSkip` | 可选接口，lastTableSkip 返回实际禁手跳过事件的 sequence 与物理 seat |
 | `TableDrawEvents` / `TableDraw` | 可选接口，lastTableDraw 只返回实际摸牌事件的 sequence、物理 seat 与非零 count |
@@ -34,7 +35,9 @@ registry.register(myProvider, this)
 
 所有接口及回调在 Paper 主线程调用。每个 session 独立保存状态；无效玩家操作或配置用带中文说明的 `IllegalArgumentException`。`validate()` 必须在建立状态之前验证自己的 `TableConfig.options`；公共配置只保存位置、游戏 id、底注、牌面、时间和字符串选项，不含特定游戏规则。
 
-AI 例外：`decide(gameId, state)` 异步计算，未来结果须在后续 `tick()` 主线程检查完成并执行，不能在 future 回调内访问 Bukkit。请求只包含该机器人的手牌与公开状态，游戏自己生成合法动作并验证结果。必须丢弃旧局、旧轮次或手牌变化前的响应；结束和关闭时取消待处理 future。外挂 JSONL 协议见 [ai/README.md](ai/README.md)，其他游戏可增加自己对应的 game id/observation，或替换 `ai.command` 运行自己的策略程序。
+实现 `TablePlayerJoin` 时，游戏先完成全部入座校验并选好物理槽位，同步调用一次 `prepareSeat(participant)`，返回后再提交参与者并触发 `changed`；回调抛出异常时不得修改原有席位。公共层在回调里完成真人传送与原生坐下。内置斗地主和 UNO 未开局时优先替换座位序号最小的机器人，没有机器人再选择空位，新真人需重新准备。保留原 `GameSession.join(player)` 签名；未实现此可选接口的扩展仍使用原来的加入与坐下失败退出流程。
+
+AI 例外：`decide(gameId, state)` 异步计算，未来结果须在后续 `tick()` 主线程检查完成并执行，不能在 future 回调内访问 Bukkit。请求只包含该机器人的手牌与公开状态，游戏自己生成合法动作并验证结果。必须丢弃旧局、旧轮次或手牌变化前的响应；结束和关闭时取消待处理 future。外挂 JSONL 协议见 [AI 运行环境说明](docs/AI_RUNTIME.md)，其他游戏可增加自己对应的 game id/observation，或替换 `ai.command` 运行自己的策略程序。
 
 机器人席位必须包含至少一名真人；机器人自动准备，每局结束真人重新准备。最后真人离开后，session 按其离桌规则结束/取消当前局并清空机器人；共享层会移除相应人偶。收费桌禁止机器人，不为虚拟 UUID 创建经济账户。1.2 增加 Participant 和 GameContext 字段，扩展须用 1.2 API 重新编译。
 
@@ -56,9 +59,13 @@ AI 例外：`decide(gameId, state)` 异步计算，未来结果须在后续 `tic
 
 Skip、Draw 各有独立的 `sequence`，同一 session 生存期内持续递增，跨局不归零。成功 start、新局 reset、取消和关闭清空这两个事件；正常获胜清禁手与旧摸牌事件，仅当本次最后 +2/+4 实际产生了罚抽时保留该次 `lastTableDraw`，随最终公开牌堆和出牌事件供收尾动画使用。事件在主线程随状态更新，并沿用 `changed()` 发布；不支持接口的扩展游戏仍可按既有规则游玩。
 
-1.3.3 新增独立可选接口 `TableCardPile`，不改既有 `GameSession` 和 `GameView`。实现它的 session 通过 `tableCards()` 返回所有人均可看的牌堆快照，旧牌在前、新牌在后；回收、重开或取消时由游戏同步清理，变更后调用 `changed()`。不要返回隐藏手牌、摸牌堆顺序或未揭晓底牌。未实现的游戏继续用 `GameView.publicCards` 作为桌面内容。共享层只渲染上层最多 16 张，但不修改游戏牌堆；多张 `publicCards` 仍提供面向玩家的最新组合摘要。右键已选牌时读取实时视图，只有控件包含 `action="play"` 才提交该控件的 action/argument；规则与回合权限仍须在游戏的 `act` 中校验，左键始终传 `select`。
+1.3.20 为 `TableTurnOrder` 增加 `directionPlacement`，默认 `TABLETOP` 在桌心显示方向，`HEADER` 自 1.3.21 起在顶部抬头两行之后另起一行显示“出牌方向 顺时针/逆时针”，灰色标签配白色方向值。位置在 session 生命周期内保持固定；两种位置均由 `turnDirection` 决定，TABLETOP 使用 `⟳` / `⟲`，返回 null 时隐藏。斗地主使用 HEADER 并将三张底牌横排置于散牌内侧中央，UNO 保持默认。
 
-1.3/1.3.1 不改变游戏接口。共享层管理内置坐下、Shift 离桌、全息选牌与动作、设置导航；不要自行创建玩家坐骑。世界牌模型的正面是 north (-Z)，FIXED 变换为单位变换，未缩放宽高为 0.625 × 0.9375。模型尺寸与渲染/选取尺寸必须一致。1.3.1 的游戏按钮由共享层生成原版矩形文字全息，不要求 CE 图标；`GameControl.icon` 保留兼容。自定义物品仍可用 CE `minecraft:display_context` 的 `gui` 分支显示独立识别图标。`cardtable:` 操作前缀留给共享世界界面。设置菜单独立派发 `skin/music/close/lobby/settings/page/bot_fill/bot_clear`，不会把这些操作传入游戏。
+1.3.19 为 `TableCardPile` 增加默认属性 `tablePileLayout`，默认 `TablePileLayout.STACKED` 保持原来的紧凑弃牌堆，`SCATTERED` 将已出牌分散到桌面中央区域。斗地主选择散放，UNO 保持叠放；其他游戏可以直接选择布局，共享层不按游戏 ID 判断。此属性在 session 生命周期内保持固定，位置与角度由牌在公开牌堆中的顺序决定，刷新与动画使用同一落点。
+
+1.3.3 新增独立可选接口 `TableCardPile`，不改既有 `GameSession` 和 `GameView`。实现它的 session 通过 `tableCards()` 返回所有人均可看的牌堆快照，旧牌在前、新牌在后；回收、重开或取消时由游戏同步清理，变更后调用 `changed()`。不要返回隐藏手牌、摸牌堆顺序或未揭晓底牌。未实现的游戏继续用 `GameView.publicCards` 作为桌面内容。STACKED 布局只渲染上层最多 16 张，SCATTERED 保留全部公开牌（斗地主每局最多 54 张），均不修改游戏牌堆；多张 `publicCards` 仍提供面向玩家的最新组合摘要。右键已选牌时读取实时视图，只有控件包含 `action="play"` 才提交该控件的 action/argument；规则与回合权限仍须在游戏的 `act` 中校验，左键始终传 `select`。
+
+1.3/1.3.1 不改变游戏接口。共享层管理内置坐下、Shift 离桌、全息选牌与动作、设置导航；不要自行创建玩家坐骑。世界牌模型的正面是 north (-Z)，FIXED 变换为单位变换，未缩放宽高为 0.625 × 0.9375。模型尺寸与渲染/选取尺寸必须一致。1.3.1 的游戏按钮由共享层生成原版矩形文字全息，不要求 CE 图标；`GameControl.icon` 保留兼容。内置 CE 物品直接引用世界模型，独立 `_gui` 模型和贴图已移除；插件菜单使用原版物品。`cardtable:` 操作前缀留给共享世界界面。设置菜单独立派发 `skin/music/close/lobby/settings/page/bot_fill/bot_clear`，不会把这些操作传入游戏。
 
 1.1 增加了 `GameView` 的牌背和离桌说明字段，扩展插件需使用 1.1 API 重新编译。UNO 素材是各皮肤下的 `uno_*` 后缀，牌背为 `uno_back`；斗地主保持默认 `back`。
 

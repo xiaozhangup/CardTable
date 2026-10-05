@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "doudizhu:item/jade_club_3_gui"
-  }
-}

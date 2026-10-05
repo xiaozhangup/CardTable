@@ -8,12 +8,16 @@ import me.xiaozhangup.cardtable.game.uno.UnoProvider
 import me.xiaozhangup.cardtable.table.*
 import me.xiaozhangup.cardtable.ui.*
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
-import org.bukkit.configuration.file.YamlConfiguration
+import me.xiaozhangup.crab.configuration.Configuration
+import me.xiaozhangup.cardtable.util.InputException
+import me.xiaozhangup.cardtable.util.requireInput
+import me.xiaozhangup.cardtable.util.sendTableMessage
+import me.xiaozhangup.cardtable.util.ext.info
+import me.xiaozhangup.cardtable.util.ext.warning
+import me.xiaozhangup.cardtable.util.ext.submitTask
+import me.xiaozhangup.cardtable.util.ext.releaseResourceFile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -22,8 +26,13 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.entity.Player
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.event.server.PluginDisableEvent
+import java.util.UUID
 
 class CardTablePlugin : CrabPlugin(), Listener {
+    init { instance = this }
+
+    internal lateinit var configuration: Configuration
+        private set
     lateinit var settings: Settings
         private set
     lateinit var economy: EconomyService
@@ -44,15 +53,21 @@ class CardTablePlugin : CrabPlugin(), Listener {
         private set
     lateinit var botAI: ExternalCardAI
         private set
-    private lateinit var preferences: YamlConfiguration
+    internal lateinit var botNames: BotNames
+        private set
+    internal lateinit var botSkins: BotSkins
+        private set
+    private val skinPreferences = mutableMapOf<UUID, String>()
 
     override fun enable() {
-        saveDefaultConfig()
-        if (!dataFolder.resolve("music.yml").exists()) saveResource("music.yml", false)
-        settings = Settings.read(config)
-        preferences = YamlConfiguration.loadConfiguration(dataFolder.resolve("preferences.yml"))
-        economy = EconomyService(this)
+        configuration = crab.configurations.load()
+        releaseResourceFile("music.yml")
+        settings = Settings.read(configuration)
+        economy = EconomyService()
         botAI = ExternalCardAI(this).also { it.start() }
+        val nameMCCache = NameMCCache()
+        botNames = BotNames(nameMCCache).also { it.start() }
+        botSkins = BotSkins(nameMCCache).also { it.start() }
         tables = CardTableService(this)
         items = ItemProvider(this)
         menus = TableMenus(this)
@@ -66,26 +81,28 @@ class CardTablePlugin : CrabPlugin(), Listener {
         listOf(this, menus, renderer).forEach { Bukkit.getPluginManager().registerEvents(it, this) }
         if (Bukkit.getPluginManager().isPluginEnabled("CraftEngine")) CraftEngineRefresh.register(this)
         TableCommands(this).register()
-        logger.info("公共牌桌服务已注册，内置斗地主与 UNO。游戏扩展可通过 Bukkit GameRegistry 注册。")
+        info("Registered the table service with Dou Dizhu and UNO. Extensions can register through GameRegistry.")
     }
 
     override fun active() {
         loadTables()
-        crab.submitTask(period = 20) { tables.tick(); economy.tick() }
-        crab.submitTask(period = 1) { audio.tick(); renderer.tick() }
+        submitTask(period = 20) { tables.tick(); economy.tick() }
+        submitTask(period = 1) { audio.tick(); renderer.tick() }
     }
 
     fun loadTables() {
         storage.load().forEach { table ->
-            try { tables.add(table) } catch (error: IllegalArgumentException) { logger.warning("牌桌 ${table.id} 未加载：${error.message}，原配置已保留。") }
+            try { tables.add(table) } catch (error: IllegalArgumentException) {
+                warning("Failed to load table ${table.id}; its saved configuration was retained.", error.stackTraceToString())
+            }
         }
-        logger.info("已加载 ${tables.rooms.size} 张牌桌。")
+        info("Loaded ${tables.rooms.size} tables.")
     }
 
     fun reloadSettings() {
-        require(tables.rooms.values.all { it.participants.isEmpty() }) { "请等所有玩家离桌后再重载。" }
-        reloadConfig()
-        val next = Settings.read(config)
+        requireInput(tables.rooms.values.all { it.participants.isEmpty() }, "All players must leave their tables before reloading.") { "请等所有玩家离桌后再重载" }
+        configuration.reload()
+        val next = Settings.read(configuration)
         tables.shutdown()
         seating.shutdown()
         botAI.close()
@@ -97,6 +114,8 @@ class CardTablePlugin : CrabPlugin(), Listener {
     }
 
     override fun disable() {
+        if (::botNames.isInitialized) botNames.close()
+        if (::botSkins.isInitialized) botSkins.close()
         if (::tables.isInitialized) tables.shutdown()
         if (::renderer.isInitialized) renderer.shutdown()
         if (::seating.isInitialized) seating.shutdown()
@@ -105,21 +124,20 @@ class CardTablePlugin : CrabPlugin(), Listener {
         Bukkit.getServicesManager().unregisterAll(this)
     }
 
-    fun tell(sender: CommandSender, text: String) = sender.sendMessage(
-        Component.text("[", NamedTextColor.DARK_GRAY)
-            .append(Component.text("牌桌", TextColor.color(0x9BC7B6)))
-            .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-            .append(LegacyComponentSerializer.legacySection().deserialize(text).colorIfAbsent(TextColor.color(0xE9F1EE)))
-    )
-    fun attempt(sender: CommandSender, action: () -> Unit) { try { action() } catch (error: IllegalArgumentException) { tell(sender, error.message ?: "参数无效。") } }
+    fun tell(sender: CommandSender, text: String) = sendTableMessage(sender, text)
+    fun attempt(sender: CommandSender, action: () -> Unit) {
+        try { action() } catch (error: IllegalArgumentException) {
+            if (sender is Player) tell(sender, (error as? InputException)?.playerMessage ?: error.message ?: "参数无效")
+            else sender.sendMessage(Component.text("[CardTable] ${error.message ?: "Invalid arguments."}"))
+        }
+    }
 
-    fun skin(playerId: java.util.UUID, tableDefault: String): String = preferences.getString(playerId.toString())?.takeIf { it in settings.skins } ?: tableDefault
+    fun skin(playerId: UUID, tableDefault: String): String = skinPreferences[playerId]?.takeIf { it in settings.skins } ?: tableDefault
     fun setSkin(player: Player, name: String) {
-        require(name in settings.skins) { "未知牌面：$name。" }
-        preferences.set(player.uniqueId.toString(), name)
-        preferences.save(dataFolder.resolve("preferences.yml"))
+        require(name in settings.skins) { "未知牌面: $name" }
+        skinPreferences[player.uniqueId] = name
         tables.tableOf(player.uniqueId)?.let { room -> renderer.invalidate(room.table.id); renderer.refresh(room); menus.refresh(room) }
-        tell(player, "已切换为 $name 牌面。")
+        tell(player, "已切换为 $name 牌面")
     }
     fun cycleSkin(player: Player) {
         val choices = settings.skins.keys.toList()
@@ -135,4 +153,9 @@ class CardTablePlugin : CrabPlugin(), Listener {
     fun death(event: PlayerDeathEvent) { tables.leave(event.entity) }
     @EventHandler
     fun dependencyDisabled(event: PluginDisableEvent) { if (event.plugin != this) tables.unregisterOwnedBy(event.plugin) }
+
+    companion object {
+        internal lateinit var instance: CardTablePlugin
+            private set
+    }
 }

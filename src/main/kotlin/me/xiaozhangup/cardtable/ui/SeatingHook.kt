@@ -2,6 +2,8 @@ package me.xiaozhangup.cardtable.ui
 
 import me.xiaozhangup.cardtable.CardTablePlugin
 import me.xiaozhangup.cardtable.table.TableConfig
+import me.xiaozhangup.cardtable.util.ext.info
+import me.xiaozhangup.cardtable.util.ext.submitTask
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Interaction
@@ -23,7 +25,7 @@ class SeatingHook(private val plugin: CardTablePlugin) : Listener {
 
     init {
         Bukkit.getPluginManager().registerEvents(this, plugin)
-        plugin.logger.info("牌桌使用原版坐姿，按 Shift 下座并离桌。")
+        info("Using native seating; press Shift to dismount and leave the table.")
     }
 
     fun join(player: Player, table: TableConfig, seat: Int, seatCount: Int) {
@@ -31,7 +33,7 @@ class SeatingHook(private val plugin: CardTablePlugin) : Listener {
         // Avatar's vehicle attachment is 0.60; the rendered hip is about 0.704 above its feet.
         // A 0.50 anchor puts the hip on the shared 0.60 stool and the eye at ground + 1.52.
         val feet = position.clone().add(0.0, ANCHOR_HEIGHT - VEHICLE_ATTACHMENT, 0.0)
-        require(player.teleport(feet)) { "入座传送被取消，请稍后再试。" }
+        require(player.teleport(feet)) { "入座传送被取消, 请稍后再试" }
         val anchor = position.world.spawn(position.clone().add(0.0, ANCHOR_HEIGHT, 0.0), Interaction::class.java) {
             it.isPersistent = false
             it.isInvulnerable = true
@@ -47,7 +49,7 @@ class SeatingHook(private val plugin: CardTablePlugin) : Listener {
             ownedSeats.remove(player.uniqueId)
             anchors.remove(anchor.uniqueId)
             anchor.remove()
-            throw IllegalArgumentException("坐下被取消，请稍后再试。")
+            throw IllegalArgumentException("坐下被取消, 请稍后再试")
         }
     }
 
@@ -64,7 +66,7 @@ class SeatingHook(private val plugin: CardTablePlugin) : Listener {
         val owned = ownedSeats[player.uniqueId] ?: return
         if (event.dismounted.uniqueId != owned.anchor.uniqueId) return
         // The native stopRiding call still mutates its passenger list after this event.
-        plugin.crab.submitTask(delay = 1) {
+        submitTask(delay = 1) {
             if (ownedSeats[player.uniqueId] === owned) plugin.tables.leave(player)
         }
     }

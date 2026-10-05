@@ -35,7 +35,7 @@ object UnoRules {
         count: Int,
         random: Random = Random.Default
     ): List<UnoCard> {
-        require(count >= 0) { "抽牌数量不能为负数" }
+        require(count >= 0) { "UNO draw count must not be negative" }
         val result = ArrayList<UnoCard>(count)
         repeat(count) {
             if (draw.isEmpty() && !refill(draw, discard, random)) return result
